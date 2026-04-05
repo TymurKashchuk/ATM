@@ -1,3 +1,6 @@
+using AtmSimulator.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace AtmSimulator
 {
     public class Program
@@ -5,6 +8,10 @@ namespace AtmSimulator
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
+                builder.Configuration.GetConnectionString("DefaultConnection")
+                ));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
