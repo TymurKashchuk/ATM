@@ -1,0 +1,31 @@
+﻿@model AtmSimulator.ViewModels.CardViewModel
+
+@{
+	ViewData["Title"] = "Insert Card";
+}
+
+<div class="atm-screen">
+    <div class="atm-card">
+        <div class="atm-header">
+            <h1>Welcome</h1>
+            <p class="text-muted">Enter your card number to continue</p>
+        </div>
+
+        <form asp-action="InsertCard" method="post">
+            <div class="form-group">
+                <label asp-for="CardNumber" class="form-label">Card Number</label>
+                <input asp-for="CardNumber"
+                       class="form-control"
+                       placeholder="1234 5678 9012 3456"
+                       maxlength="16" />
+                <span asp-validation-for="CardNumber" class="text-danger"></span>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
+
+            <button type="submit" class="btn-atm mt-4">
+                Insert Card →
+            </button>
+        </form>
+    </div>
+</div>

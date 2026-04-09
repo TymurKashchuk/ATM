@@ -1,7 +1,6 @@
 ﻿using AtmSimulator.Services;
 using AtmSimulator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AtmSimulator.Controllers
 {
@@ -17,7 +16,8 @@ namespace AtmSimulator.Controllers
         public IActionResult InsertCard() => View(new CardViewModel());
 
         [HttpPost]
-        public async Task<IActionResult> InsertCard(CardViewModel model) {
+        public async Task<IActionResult> InsertCard(CardViewModel model)
+        {
             if (!ModelState.IsValid) return View(model);
 
             var card = await _authService.FindCardAsync(model.CardNumber);
@@ -38,8 +38,17 @@ namespace AtmSimulator.Controllers
             return RedirectToAction("EnterPin");
         }
 
+        public IActionResult EnterPin()
+        {
+            if (HttpContext.Session.GetString("CardNumber") == null)
+                return RedirectToAction("InsertCard");
+
+            return View(new PinViewModel());
+        }
+
         [HttpPost]
-        public async Task<IActionResult> EnterPin(PinViewModel model) {
+        public async Task<IActionResult> EnterPin(PinViewModel model)
+        {
             if (!ModelState.IsValid) return View(model);
 
             var cardNumber = HttpContext.Session.GetString("CardNumber");
@@ -67,7 +76,8 @@ namespace AtmSimulator.Controllers
             return RedirectToAction("Index", "Account");
         }
 
-        public IActionResult Logout() {
+        public IActionResult Logout()
+        {
             HttpContext.Session.Clear();
             return RedirectToAction("InsertCard");
         }
