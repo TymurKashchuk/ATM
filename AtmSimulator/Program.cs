@@ -1,4 +1,5 @@
 using AtmSimulator.Data;
+using AtmSimulator.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace AtmSimulator
@@ -12,6 +13,15 @@ namespace AtmSimulator
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
+
+            builder.Services.AddScoped<AuthService>();
+
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(10);
+                options.Cookie.HttpOnly = true;
+            });
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -31,11 +41,13 @@ namespace AtmSimulator
 
             app.UseRouting();
 
+            app.UseSession();
+
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Auth}/{action=InsertCard}/{id?}");
 
             app.Run();
         }

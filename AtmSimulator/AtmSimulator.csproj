@@ -19,12 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
     <Folder Include="Patterns\Observer\" />
     <Folder Include="Patterns\Strategy\" />
     <Folder Include="Patterns\State\" />
     <Folder Include="Repositories\Interfaces\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
