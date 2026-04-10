@@ -118,3 +118,63 @@ body {
     color: #e94560 !important;
     font-size: 0.8rem;
 }
+
+.text-muted {
+    color: white !important;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+
+.balance-box {
+    background: #0f3460;
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.balance-label {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.balance-amount {
+    color: #4ade80;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.menu-btn {
+    display: block;
+    padding: 1rem;
+    background: #0f3460;
+    border: 1px solid #1a4a7a;
+    border-radius: 10px;
+    color: #e0e0e0;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+    .menu-btn:hover {
+        background: #1a4a7a;
+        border-color: #e94560;
+        color: #fff;
+    }
+
+.menu-btn-danger:hover {
+    background: rgba(233, 69, 96, 0.15);
+    border-color: #e94560;
+    color: #e94560;
+}
