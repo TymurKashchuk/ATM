@@ -1,0 +1,45 @@
+﻿@model AtmSimulator.ViewModels.AccountViewModel
+
+@{
+	ViewData["Title"] = "Main Menu";
+}
+
+<div class="atm-screen">
+    <div class="atm-card" style="max-width: 480px;">
+
+        <div class="atm-header">
+            <p class="text-muted">Welcome</p>
+            <h1>@Model.OwnerName</h1>
+            <p class="text-muted">
+                **** **** **** @Model.CardNumber[^4..]
+            </p>
+        </div>
+
+        <div class="balance-box">
+            <p class="balance-label">Available Balance</p>
+            <p class="balance-amount">@Model.Balance.ToString("N2") ₴</p>
+        </div>
+
+        <div class="menu-grid">
+            <a asp-controller="Transaction" asp-action="Withdraw" class="menu-btn">
+                Withdraw
+            </a>
+            <a asp-controller="Transaction" asp-action="Deposit" class="menu-btn">
+                Deposit
+            </a>
+            <a asp-controller="Transaction" asp-action="Transfer" class="menu-btn">
+                Transfer
+            </a>
+            <a asp-controller="Transaction" asp-action="History" class="menu-btn">
+                History
+            </a>
+            <a asp-controller="Account" asp-action="ChangePin" class="menu-btn">
+                Change PIN
+            </a>
+            <a asp-controller="Auth" asp-action="Logout" class="menu-btn menu-btn-danger">
+                Exit
+            </a>
+        </div>
+
+    </div>
+</div>
