@@ -22,7 +22,7 @@
             }
 
             if (remaining > 0)
-                throw new InvalidOperationException("Cannot dispense exact amount with available denominations");
+                throw new InvalidOperationException("Неможливо видати точну суму з доступними номіналами");
 
             return result;
         }

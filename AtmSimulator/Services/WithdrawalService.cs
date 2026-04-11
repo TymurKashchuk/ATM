@@ -23,13 +23,13 @@ namespace AtmSimulator.Services
 
         public async Task<Dictionary<int, int>> WithdrawAsync(int accountId, decimal amount) {
             var account = await _context.Accounts.FindAsync(accountId)
-                ?? throw new InvalidOperationException("Account not found");
+                ?? throw new InvalidOperationException("Акаунт не знайдено");
 
             if (account.Balance < amount)
-                throw new InvalidOperationException("Insufficient funds");
+                throw new InvalidOperationException("Недостатньо коштів");
 
             if (amount % 20 != 0)
-                throw new InvalidOperationException("Amount must be a multiple of 20");
+                throw new InvalidOperationException("Сума має бути кратною 20");
 
             var availableCash = await GetAvailableCashAsync();
             var dispensed = _dispenserStrategy.Calculate(amount, availableCash);
@@ -48,7 +48,7 @@ namespace AtmSimulator.Services
                 AccountId = accountId,
                 Type = TransactionType.Withdrawal,
                 Amount = amount,
-                Description = $"Cash withdrawal: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}"
+                Description = $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}"
             });
 
             await _context.SaveChangesAsync();
