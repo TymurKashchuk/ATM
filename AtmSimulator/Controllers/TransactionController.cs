@@ -37,9 +37,11 @@ namespace AtmSimulator.Controllers
             try
             {
                 var dispensed = await _withdrawalService.WithdrawAsync(accountId.Value, model.Amount);
+                await _context.Entry(account).ReloadAsync();
+
                 model.DispensedCash = dispensed;
-                model.CurrentBalance = account.Balance - model.Amount;
-                TempData["Success"] = "Withdrawal successful!";
+                model.CurrentBalance = account.Balance;
+
                 return View("WithdrawSuccess", model);
             }
             catch (InvalidOperationException ex)

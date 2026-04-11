@@ -178,3 +178,47 @@ body {
     border-color: #e94560;
     color: #e94560;
 }
+
+
+.quick-amounts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.quick-btn {
+    padding: 0.6rem;
+    background: #0f3460;
+    border: 1px solid #1a4a7a;
+    border-radius: 8px;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+    .quick-btn:hover {
+        border-color: #e94560;
+        color: #e94560;
+    }
+
+.dispensed-cash {
+    background: #0f3460;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.banknote-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #1a4a7a;
+    color: #e0e0e0;
+    font-size: 0.9rem;
+}
+
+    .banknote-row:last-child {
+        border-bottom: none;
+    }
