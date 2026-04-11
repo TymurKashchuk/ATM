@@ -1,4 +1,5 @@
 using AtmSimulator.Data;
+using AtmSimulator.Patterns.Strategy;
 using AtmSimulator.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,9 @@ namespace AtmSimulator
                 options.IdleTimeout = TimeSpan.FromMinutes(10);
                 options.Cookie.HttpOnly = true;
             });
+
+            builder.Services.AddScoped<ICashDispenserStrategy, GreedyCashDispenserStrategy>();
+            builder.Services.AddScoped<WithdrawalService>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

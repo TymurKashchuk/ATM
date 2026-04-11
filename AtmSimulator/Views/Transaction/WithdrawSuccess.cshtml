@@ -1,0 +1,36 @@
+﻿@model AtmSimulator.ViewModels.WithdrawalViewModel
+
+@{
+    ViewData["Title"] = "Withdrawal Successful";
+}
+
+<div class="atm-screen">
+    <div class="atm-card">
+        <div class="atm-header">
+            <h1 style="color:#4ade80">Success</h1>
+            <p class="text-muted">Your cash has been dispensed</p>
+        </div>
+
+        <div class="balance-box">
+            <p class="balance-label">New Balance</p>
+            <p class="balance-amount">@Model.CurrentBalance.ToString("N2") ₴</p>
+        </div>
+
+        @if (Model.DispensedCash != null)
+        {
+            <div class="dispensed-cash">
+                <p class="balance-label" style="margin-bottom:0.75rem">Dispensed banknotes</p>
+                @foreach (var item in Model.DispensedCash.OrderByDescending(x => x.Key))
+                {
+                    <div class="banknote-row">
+                        <span>@item.Key ₴</span>
+                        <span>× @item.Value</span>
+                        <span style="color:#4ade80">= @(item.Key * item.Value) ₴</span>
+                    </div>
+                }
+            </div>
+        }
+
+        <a asp-controller="Account" asp-action="Index" class="btn-atm mt-4">← Main Menu</a>
+    </div>
+</div>
