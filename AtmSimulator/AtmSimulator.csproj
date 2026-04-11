@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Patterns\Observer\" />
-    <Folder Include="Patterns\Strategy\" />
     <Folder Include="Patterns\State\" />
     <Folder Include="Repositories\Interfaces\" />
   </ItemGroup>
