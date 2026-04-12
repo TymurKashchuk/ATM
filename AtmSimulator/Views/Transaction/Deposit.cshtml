@@ -1,5 +1,42 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model AtmSimulator.ViewModels.DepositViewModel
+
 @{
+    ViewData["Title"] = "Deposit Cash";
+}
+
+<div class="atm-screen">
+    <div class="atm-card">
+        <div class="atm-header">
+            <h1>Deposit Cash</h1>
+            <p class="text-muted">Available: <strong style="color:#4ade80">@Model.CurrentBalance.ToString("N2") ₴</strong></p>
+        </div>
+
+        <form asp-action="Deposit" method="post">
+            <div class="form-group">
+                <label asp-for="Amount" class="form-label">Amount (multiple of 20)</label>
+                <input asp-for="Amount" class="form-control" placeholder="e.g. 1000" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <div class="quick-amounts">
+                <button type="button" class="quick-btn" onclick="setAmount(500)">500 ₴</button>
+                <button type="button" class="quick-btn" onclick="setAmount(1000)">1000 ₴</button>
+                <button type="button" class="quick-btn" onclick="setAmount(2000)">2000 ₴</button>
+                <button type="button" class="quick-btn" onclick="setAmount(5000)">5000 ₴</button>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
+
+            <button type="submit" class="btn-atm mt-4">Deposit →</button>
+            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">← Back</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function setAmount(val) {
+            document.getElementById('Amount').value = val;
+        }
+    </script>
 }
