@@ -27,6 +27,7 @@ namespace AtmSimulator
             builder.Services.AddScoped<ICashDispenserStrategy, GreedyCashDispenserStrategy>();
             builder.Services.AddScoped<WithdrawalService>();
 
+            builder.Services.AddScoped<DepositService>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 

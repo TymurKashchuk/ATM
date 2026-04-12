@@ -15,6 +15,13 @@
             </p>
         </div>
 
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert-success-atm">
+                @TempData["Success"]
+            </div>
+        }
+
         <div class="balance-box">
             <p class="balance-label">Available Balance</p>
             <p class="balance-amount">@Model.Balance.ToString("N2") ₴</p>
@@ -40,6 +47,5 @@
                 Exit
             </a>
         </div>
-
     </div>
 </div>
