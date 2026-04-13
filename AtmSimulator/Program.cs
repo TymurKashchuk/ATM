@@ -28,6 +28,8 @@ namespace AtmSimulator
             builder.Services.AddScoped<WithdrawalService>();
 
             builder.Services.AddScoped<DepositService>();
+
+            builder.Services.AddScoped<TransferService>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
