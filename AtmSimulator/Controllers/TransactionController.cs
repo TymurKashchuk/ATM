@@ -10,12 +10,14 @@ namespace AtmSimulator.Controllers
         private readonly AppDbContext _context;
         private readonly WithdrawalService _withdrawalService;
         private readonly DepositService _depositService;
+        private readonly TransferService _transferService;
 
-        public TransactionController(AppDbContext context, WithdrawalService withdrawalService, DepositService depositService)
+        public TransactionController(AppDbContext context, WithdrawalService withdrawalService, DepositService depositService, TransferService transferService)
         {
             _context = context;
             _withdrawalService = withdrawalService;
             _depositService = depositService;
+            _transferService = transferService;
         }
 
         public async Task<IActionResult> Withdraw() {
@@ -78,6 +80,41 @@ namespace AtmSimulator.Controllers
                 await _context.Entry(account).ReloadAsync();
 
                 TempData["Success"] = $"Успішно внесено {model.Amount:N2} ₴";
+                return RedirectToAction("Index", "Account");
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
+        }
+
+        public async Task<IActionResult> Transfer()
+        {
+            var accountId = HttpContext.Session.GetInt32("AccountId");
+            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+
+            var account = await _context.Accounts.FindAsync(accountId);
+            return View(new TransferViewModel { CurrentBalance = account!.Balance });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Transfer(TransferViewModel model)
+        {
+            var accountId = HttpContext.Session.GetInt32("AccountId");
+            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+
+            var account = await _context.Accounts.FindAsync(accountId);
+            model.CurrentBalance = account!.Balance;
+
+            if (!ModelState.IsValid) return View(model);
+
+            try
+            {
+                await _transferService.TransferAsync(accountId.Value, model.RecipientCardNumber, model.Amount);
+                await _context.Entry(account).ReloadAsync();
+
+                TempData["Success"] = $"Успішно переведено {model.Amount:N2} ₴";
                 return RedirectToAction("Index", "Account");
             }
             catch (InvalidOperationException ex)
