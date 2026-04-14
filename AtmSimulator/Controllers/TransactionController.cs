@@ -11,13 +11,16 @@ namespace AtmSimulator.Controllers
         private readonly WithdrawalService _withdrawalService;
         private readonly DepositService _depositService;
         private readonly TransferService _transferService;
+        private readonly TransactionService _transactionService;
 
-        public TransactionController(AppDbContext context, WithdrawalService withdrawalService, DepositService depositService, TransferService transferService)
+        public TransactionController(AppDbContext context, WithdrawalService withdrawalService, DepositService depositService, 
+            TransferService transferService, TransactionService transactionService)
         {
             _context = context;
             _withdrawalService = withdrawalService;
             _depositService = depositService;
             _transferService = transferService;
+            _transactionService = transactionService;
         }
 
         public async Task<IActionResult> Withdraw() {
@@ -122,6 +125,25 @@ namespace AtmSimulator.Controllers
                 ModelState.AddModelError("", ex.Message);
                 return View(model);
             }
+        }
+
+        public async Task<IActionResult> History(int page = 1) {
+            var accountId = HttpContext.Session.GetInt32("AccountId");
+            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+
+            const int pageSize = 10;
+            var transactions = await _transactionService.GetHistoryAsync(accountId.Value, page, pageSize);
+            var totalCount = await _transactionService.GetTotalCountAsync(accountId.Value);
+
+            var viewModel = new TransactionHistoryViewModel
+            {
+                Transactions = transactions,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                TotalCount = totalCount
+            };
+
+            return View(viewModel);
         }
     }
 }
