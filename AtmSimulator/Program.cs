@@ -32,6 +32,8 @@ namespace AtmSimulator
 
             builder.Services.AddScoped<TransferService>();
 
+            builder.Services.AddScoped<PinService>();
+
             builder.Services.AddSingleton<TransactionNotifier>(sp =>
             {
                 var notifier = new TransactionNotifier();

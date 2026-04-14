@@ -1,0 +1,51 @@
+﻿@model AtmSimulator.ViewModels.ChangePinViewModel;
+
+@{
+	ViewData["Title"] = "Change PIN";
+}
+
+<div class="atm-screen">
+	<div class="atm-card">
+		<div class="atm-header">
+			<h1>Change PIN</h1>
+			<p class="text-muted">Enter your current and new PIN</p>
+		</div>
+
+        <form asp-action="ChangePin" method="post">
+            <div class="form-group">
+                <label asp-for="CurrentPin" class="form-label">Current PIN</label>
+                <input asp-for="CurrentPin"
+                       class="form-control text-center"
+                       type="password"
+                       placeholder="••••"
+                       maxlength="4" />
+                <span asp-validation-for="CurrentPin" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="NewPin" class="form-label">New PIN</label>
+                <input asp-for="NewPin"
+                       class="form-control text-center"
+                       type="password"
+                       placeholder="••••"
+                       maxlength="4" />
+                <span asp-validation-for="NewPin" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="ConfirmPin" class="form-label">Confirm New PIN</label>
+                <input asp-for="ConfirmPin"
+                       class="form-control text-center"
+                       type="password"
+                       placeholder="••••"
+                       maxlength="4" />
+                <span asp-validation-for="ConfirmPin" class="text-danger"></span>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
+
+            <button type="submit" class="btn-atm mt-4">Change PIN →</button>
+            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">← Back</a>
+        </form>
+	</div>
+</div>
