@@ -1,5 +1,4 @@
-﻿using System.Transactions;
-using AtmSimulator.Models;
+﻿using AtmSimulator.Models;
 
 namespace AtmSimulator.Patterns.Observer
 {
