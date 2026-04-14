@@ -2,6 +2,7 @@ using AtmSimulator.Data;
 using AtmSimulator.Patterns.Strategy;
 using AtmSimulator.Services;
 using Microsoft.EntityFrameworkCore;
+using AtmSimulator.Patterns.Observer;
 
 namespace AtmSimulator
 {
@@ -30,6 +31,16 @@ namespace AtmSimulator
             builder.Services.AddScoped<DepositService>();
 
             builder.Services.AddScoped<TransferService>();
+
+            builder.Services.AddSingleton<TransactionNotifier>(sp =>
+            {
+                var notifier = new TransactionNotifier();
+                var logger = sp.GetRequiredService<ILogger<TransactionLogger>>();
+                notifier.Subscribe(new TransactionLogger(logger));
+                return notifier;
+            });
+
+            builder.Services.AddScoped<TransactionService>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
