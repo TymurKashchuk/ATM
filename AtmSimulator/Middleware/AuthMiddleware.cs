@@ -4,12 +4,6 @@
     {
         private readonly RequestDelegate _next;
 
-        private static readonly string[] PublicRoutes = {
-            "/Auth/InsertCard",
-            "/Auth/EnterPin",
-            "/Auth/Logout"
-        };
-
         public AuthMiddleware(RequestDelegate next)
         {
             _next = next;
@@ -17,14 +11,23 @@
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var path = context.Request.Path.Value ?? string.Empty;
+            var path = context.Request.Path.Value?.ToLower() ?? "";
 
-            var isPublic = PublicRoutes.Any(r =>
-                path.StartsWith(r, StringComparison.OrdinalIgnoreCase));
+            if (path.StartsWith("/auth"))
+            {
+                await _next(context);
+                return;
+            }
+
+            if (path.StartsWith("/css") || path.StartsWith("/js") || path.StartsWith("/lib"))
+            {
+                await _next(context);
+                return;
+            }
 
             var isAuthenticated = context.Session.GetInt32("AccountId") != null;
 
-            if (!isPublic && !isAuthenticated)
+            if (!isAuthenticated)
             {
                 context.Response.Redirect("/Auth/InsertCard");
                 return;

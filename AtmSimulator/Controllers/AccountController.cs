@@ -17,8 +17,10 @@ namespace AtmSimulator.Controllers
             _pinService = pinService;
         }
 
-        public async Task<IActionResult> Index() {
-            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
+        public async Task<IActionResult> Index()
+        {
+            var accountId = HttpContext.Session.GetInt32("AccountId");
+            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
 
             var account = await _context.Accounts
             .Include(a => a.Card)
@@ -37,25 +39,30 @@ namespace AtmSimulator.Controllers
             return View(viewModel);
         }
 
-        public IActionResult ChangePin() {
-            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
+        public IActionResult ChangePin()
+        {
+            var accountId = HttpContext.Session.GetInt32("AccountId");
+            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
 
             return View(new ChangePinViewModel());
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePin(ChangePinViewModel model) {
-            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!; ;
+        public async Task<IActionResult> ChangePin(ChangePinViewModel model)
+        {
+            var accountId = HttpContext.Session.GetInt32("AccountId");
+            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
 
             if (!ModelState.IsValid) return View(model);
 
             try
             {
-                await _pinService.ChangePinAsync(accountId, model.CurrentPin, model.NewPin, model.ConfirmPin);
+                await _pinService.ChangePinAsync(accountId.Value, model.CurrentPin, model.NewPin, model.ConfirmPin);
                 TempData["Success"] = "PIN успішно змінено";
                 return RedirectToAction("Index");
             }
-            catch (InvalidOperationException ex) {
+            catch (InvalidOperationException ex)
+            {
                 ModelState.AddModelError("", ex.Message);
                 return View(model);
             }

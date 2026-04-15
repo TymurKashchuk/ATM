@@ -1,9 +1,9 @@
-﻿namespace AtmSimulator.Middleware
+﻿namespace AtmSimulator.Middleware;
+
+public static class AuthMiddlewareExtensions
 {
-    public static class AuthMiddlewareExtensions
+    public static IApplicationBuilder UseAuthMiddleware(this IApplicationBuilder app)
     {
-        public static IApplicationBuilder UseAuthMiddleware(this IApplicationBuilder app) {
-            return app.UseMiddleware<AuthMiddleware>();
-        }
+        return app.UseMiddleware<AuthMiddleware>();
     }
 }
