@@ -11,7 +11,8 @@
             <p class="text-muted">Enter your 4-digit PIN</p>
         </div>
 
-        <form asp-action="EnterPin" method="post">
+        <form action="/Auth/EnterPin" method="post">
+            @Html.AntiForgeryToken()
             <div class="form-group">
                 <label asp-for="Pin" class="form-label">PIN</label>
                 <input asp-for="Pin"

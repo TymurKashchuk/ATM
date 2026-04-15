@@ -11,7 +11,8 @@
             <p class="text-muted">Enter your card number to continue</p>
         </div>
 
-        <form asp-action="InsertCard" method="post">
+        <form action="/Auth/InsertCard" method="post">
+            @Html.AntiForgeryToken()
             <div class="form-group">
                 <label asp-for="CardNumber" class="form-label">Card Number</label>
                 <input asp-for="CardNumber"

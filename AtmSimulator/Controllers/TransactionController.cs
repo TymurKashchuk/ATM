@@ -13,7 +13,7 @@ namespace AtmSimulator.Controllers
         private readonly TransferService _transferService;
         private readonly TransactionService _transactionService;
 
-        public TransactionController(AppDbContext context, WithdrawalService withdrawalService, DepositService depositService, 
+        public TransactionController(AppDbContext context, WithdrawalService withdrawalService, DepositService depositService,
             TransferService transferService, TransactionService transactionService)
         {
             _context = context;
@@ -23,18 +23,18 @@ namespace AtmSimulator.Controllers
             _transactionService = transactionService;
         }
 
-        public async Task<IActionResult> Withdraw() {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+        public async Task<IActionResult> Withdraw()
+        {
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
             return View(new WithdrawalViewModel { CurrentBalance = account!.Balance });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Withdraw(WithdrawalViewModel model) {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+        public async Task<IActionResult> Withdraw(WithdrawalViewModel model)
+        {
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
             model.CurrentBalance = account!.Balance;
@@ -43,7 +43,7 @@ namespace AtmSimulator.Controllers
 
             try
             {
-                var dispensed = await _withdrawalService.WithdrawAsync(accountId.Value, model.Amount);
+                var dispensed = await _withdrawalService.WithdrawAsync(accountId, model.Amount);
                 await _context.Entry(account).ReloadAsync();
 
                 model.DispensedCash = dispensed;
@@ -60,17 +60,16 @@ namespace AtmSimulator.Controllers
 
         public async Task<IActionResult> Deposit()
         {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
-            return View(new DepositViewModel { CurrentBalance = account!.Balance});
+            return View(new DepositViewModel { CurrentBalance = account!.Balance });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Deposit(DepositViewModel model) {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+        public async Task<IActionResult> Deposit(DepositViewModel model)
+        {
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
             model.CurrentBalance = account!.Balance;
@@ -79,7 +78,7 @@ namespace AtmSimulator.Controllers
 
             try
             {
-                await _depositService.DepositAsync(accountId.Value, model.Amount);
+                await _depositService.DepositAsync(accountId, model.Amount);
                 await _context.Entry(account).ReloadAsync();
 
                 TempData["Success"] = $"Успішно внесено {model.Amount:N2} ₴";
@@ -94,8 +93,7 @@ namespace AtmSimulator.Controllers
 
         public async Task<IActionResult> Transfer()
         {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
             return View(new TransferViewModel { CurrentBalance = account!.Balance });
@@ -104,8 +102,7 @@ namespace AtmSimulator.Controllers
         [HttpPost]
         public async Task<IActionResult> Transfer(TransferViewModel model)
         {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
             model.CurrentBalance = account!.Balance;
@@ -114,7 +111,7 @@ namespace AtmSimulator.Controllers
 
             try
             {
-                await _transferService.TransferAsync(accountId.Value, model.RecipientCardNumber, model.Amount);
+                await _transferService.TransferAsync(accountId, model.RecipientCardNumber, model.Amount);
                 await _context.Entry(account).ReloadAsync();
 
                 TempData["Success"] = $"Успішно переведено {model.Amount:N2} ₴";
@@ -127,13 +124,13 @@ namespace AtmSimulator.Controllers
             }
         }
 
-        public async Task<IActionResult> History(int page = 1) {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+        public async Task<IActionResult> History(int page = 1)
+        {
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             const int pageSize = 10;
-            var transactions = await _transactionService.GetHistoryAsync(accountId.Value, page, pageSize);
-            var totalCount = await _transactionService.GetTotalCountAsync(accountId.Value);
+            var transactions = await _transactionService.GetHistoryAsync(accountId, page, pageSize);
+            var totalCount = await _transactionService.GetTotalCountAsync(accountId);
 
             var viewModel = new TransactionHistoryViewModel
             {
