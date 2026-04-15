@@ -19,8 +19,7 @@ namespace AtmSimulator.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts
             .Include(a => a.Card)
@@ -41,8 +40,7 @@ namespace AtmSimulator.Controllers
 
         public IActionResult ChangePin()
         {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             return View(new ChangePinViewModel());
         }
@@ -50,14 +48,13 @@ namespace AtmSimulator.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangePin(ChangePinViewModel model)
         {
-            var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             if (!ModelState.IsValid) return View(model);
 
             try
             {
-                await _pinService.ChangePinAsync(accountId.Value, model.CurrentPin, model.NewPin, model.ConfirmPin);
+                await _pinService.ChangePinAsync(accountId, model.CurrentPin, model.NewPin, model.ConfirmPin);
                 TempData["Success"] = "PIN успішно змінено";
                 return RedirectToAction("Index");
             }
