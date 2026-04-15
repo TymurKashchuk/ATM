@@ -3,6 +3,7 @@ using AtmSimulator.Patterns.Strategy;
 using AtmSimulator.Services;
 using Microsoft.EntityFrameworkCore;
 using AtmSimulator.Patterns.Observer;
+using AtmSimulator.Middleware;
 
 namespace AtmSimulator
 {
@@ -62,6 +63,7 @@ namespace AtmSimulator
             app.UseRouting();
 
             app.UseSession();
+            app.UseAuthMiddleware();
 
             app.UseAuthorization();
 
