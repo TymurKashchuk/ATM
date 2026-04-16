@@ -1,4 +1,7 @@
-﻿namespace AtmSimulator.Middleware
+﻿using AtmSimulator.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace AtmSimulator.Middleware
 {
     public class AuthMiddleware
     {
@@ -37,6 +40,18 @@
             {
                 context.Response.Redirect("/Auth/InsertCard");
                 return;
+            }
+
+            var cardNumber = context.Session.GetString("AuthenticatedCard");
+            if (cardNumber != null) {
+                var dbContext = context.RequestServices.GetRequiredService<AppDbContext>();
+                var card = await dbContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber);
+                if (card != null && card.IsBlocked)
+                {
+                    context.Session.Clear();
+                    context.Response.Redirect("/Auth/InsertCard");
+                    return;
+                }
             }
 
             await _next(context);
