@@ -44,8 +44,11 @@ namespace AtmSimulator
             });
 
             builder.Services.AddScoped<TransactionService>();
+
+            builder.Services.AddScoped<AdminService>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
 
             var app = builder.Build();
 

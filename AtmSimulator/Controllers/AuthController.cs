@@ -13,7 +13,17 @@ namespace AtmSimulator.Controllers
             _authService = authService;
         }
 
-        public IActionResult InsertCard() => View(new CardViewModel());
+        public IActionResult InsertCard()
+        {
+            var blocked = HttpContext.Session.GetString("BlockedMessage");
+            if (blocked != null)
+            {
+                TempData["BlockedMessage"] = blocked;
+                HttpContext.Session.Remove("BlockedMessage");
+            }
+
+            return View(new CardViewModel());
+        }
 
         [HttpPost]
         public async Task<IActionResult> InsertCard(CardViewModel model)
