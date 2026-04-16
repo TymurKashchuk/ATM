@@ -4,6 +4,11 @@
 	ViewData["Title"] = "Insert Card";
 }
 
+@if (TempData["BlockedMessage"] != null)
+{
+    <div class="alert-danger mb-3">@TempData["BlockedMessage"]</div>
+}
+
 <div class="atm-screen">
     <div class="atm-card">
         <div class="atm-header">

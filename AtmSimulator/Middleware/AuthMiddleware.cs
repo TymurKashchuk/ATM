@@ -49,6 +49,8 @@ namespace AtmSimulator.Middleware
                 if (card != null && card.IsBlocked)
                 {
                     context.Session.Clear();
+                    context.Session.SetString("BlockedMessage", "Вашу картку було заблоковано адміністратором");
+
                     context.Response.Redirect("/Auth/InsertCard");
                     return;
                 }
