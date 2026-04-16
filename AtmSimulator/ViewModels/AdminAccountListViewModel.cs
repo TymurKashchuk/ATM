@@ -1,6 +1,6 @@
 ﻿namespace AtmSimulator.ViewModels
 {
-    public class AdminViewModels
+    public class AdminAccountListViewModel
     {
         public List<AdminAccountItemViewModel> Accounts { get; set; } = new();
         public string? SearchQuery { get; set; }
