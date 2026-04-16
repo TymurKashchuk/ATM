@@ -19,6 +19,12 @@
                 return;
             }
 
+            if (path.StartsWith("/admin"))
+            {
+                await _next(context);
+                return;
+            }
+
             if (path.StartsWith("/css") || path.StartsWith("/js") || path.StartsWith("/lib"))
             {
                 await _next(context);

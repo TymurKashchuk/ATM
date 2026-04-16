@@ -1,0 +1,67 @@
+﻿@model AtmSimulator.ViewModels.AdminAccountListViewModel
+
+@{
+    ViewData["Title"] = "Адмін панель";
+}
+
+<h2>Адмін панель</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="d-flex justify-content-between mb-3">
+    <form method="get" class="d-flex gap-2">
+        <input type="text" name="search" value="@Model.SearchQuery"
+               class="form-control" placeholder="Пошук за ім'ям або номером картки" />
+        <button type="submit" class="btn btn-primary">Знайти</button>
+        @if (!string.IsNullOrEmpty(Model.SearchQuery))
+        {
+            <a href="/Admin" class="btn btn-secondary">Скинути</a>
+        }
+    </form>
+    <a href="/Admin/Create" class="btn btn-success">+ Новий акаунт</a>
+</div>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Власник</th>
+            <th>Номер картки</th>
+            <th>Баланс</th>
+            <th>Статус</th>
+            <th>Дія</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var account in Model.Accounts)
+        {
+            <tr>
+                <td>@account.Id</td>
+                <td>@account.OwnerName</td>
+                <td>@account.CardNumber</td>
+                <td>@account.Balance.ToString("N2") ₴</td>
+                <td>
+                    @if (account.IsBlocked)
+                    {
+                        <span class="badge bg-danger">Заблокована</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Активна</span>
+                    }
+                </td>
+                <td>
+                    <form method="post" action="/Admin/ToggleBlock">
+                        <input type="hidden" name="accountId" value="@account.Id" />
+                        <button type="submit" class="btn btn-sm @(account.IsBlocked ? "btn-success" : "btn-warning")">
+                            @(account.IsBlocked ? "Розблокувати" : "Заблокувати")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
