@@ -4,37 +4,41 @@
     ViewData["Title"] = "Створити акаунт";
 }
 
-<h2>Створити новий акаунт</h2>
-
-<div class="col-md-5">
-    <form method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-        <div class="mb-3">
-            <label asp-for="OwnerName" class="form-label">Ім'я власника</label>
-            <input asp-for="OwnerName" class="form-control" />
-            <span asp-validation-for="OwnerName" class="text-danger"></span>
+<div class="atm-screen">
+    <div class="atm-card">
+        <div class="atm-header">
+            <h1>Новий акаунт</h1>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="CardNumber" class="form-label">Номер картки (16 цифр)</label>
-            <input asp-for="CardNumber" class="form-control" maxlength="16" />
-            <span asp-validation-for="CardNumber" class="text-danger"></span>
-        </div>
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="alert-danger mb-3"></div>
 
-        <div class="mb-3">
-            <label asp-for="Pin" class="form-label">PIN (4 цифри)</label>
-            <input asp-for="Pin" class="form-control" maxlength="4" type="password" />
-            <span asp-validation-for="Pin" class="text-danger"></span>
-        </div>
+            <div class="form-group mb-3">
+                <label asp-for="OwnerName" class="form-label">Ім'я власника</label>
+                <input asp-for="OwnerName" class="form-control" />
+                <span asp-validation-for="OwnerName" class="text-danger"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="InitialBalance" class="form-label">Початковий баланс</label>
-            <input asp-for="InitialBalance" class="form-control" />
-            <span asp-validation-for="InitialBalance" class="text-danger"></span>
-        </div>
+            <div class="form-group mb-3">
+                <label asp-for="CardNumber" class="form-label">Номер картки (16 цифр)</label>
+                <input asp-for="CardNumber" class="form-control" maxlength="16" />
+                <span asp-validation-for="CardNumber" class="text-danger"></span>
+            </div>
 
-        <button type="submit" class="btn btn-success">Створити</button>
-        <a href="/Admin" class="btn btn-secondary ms-2">Скасувати</a>
-    </form>
+            <div class="form-group mb-3">
+                <label asp-for="Pin" class="form-label">PIN (4 цифри)</label>
+                <input asp-for="Pin" class="form-control" maxlength="4" type="password" />
+                <span asp-validation-for="Pin" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="InitialBalance" class="form-label">Початковий баланс (₴)</label>
+                <input asp-for="InitialBalance" class="form-control" />
+                <span asp-validation-for="InitialBalance" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn-atm mt-2">Створити →</button>
+            <a href="/Admin/Index" class="btn-atm-outline mt-2">← Скасувати</a>
+        </form>
+    </div>
 </div>

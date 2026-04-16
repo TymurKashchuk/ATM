@@ -1,67 +1,60 @@
 ﻿@model AtmSimulator.ViewModels.AdminAccountListViewModel
 
 @{
-    ViewData["Title"] = "Адмін панель";
+    ViewData["Title"] = "Admin Panel";
 }
 
-<h2>Адмін панель</h2>
+<div class="atm-screen">
+    <div class="atm-card" style="max-width: 700px;">
+        <div class="atm-header">
+            <h1>Admin Panel</h1>
+        </div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-
-<div class="d-flex justify-content-between mb-3">
-    <form method="get" class="d-flex gap-2">
-        <input type="text" name="search" value="@Model.SearchQuery"
-               class="form-control" placeholder="Пошук за ім'ям або номером картки" />
-        <button type="submit" class="btn btn-primary">Знайти</button>
-        @if (!string.IsNullOrEmpty(Model.SearchQuery))
+        @if (TempData["Success"] != null)
         {
-            <a href="/Admin" class="btn btn-secondary">Скинути</a>
+            <div class="alert-success-atm">@TempData["Success"]</div>
         }
-    </form>
-    <a href="/Admin/Create" class="btn btn-success">+ Новий акаунт</a>
-</div>
 
-<table class="table table-bordered">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Власник</th>
-            <th>Номер картки</th>
-            <th>Баланс</th>
-            <th>Статус</th>
-            <th>Дія</th>
-        </tr>
-    </thead>
-    <tbody>
+        <form method="get" style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+            <input type="text" name="search" value="@Model.SearchQuery"
+                   class="form-control" placeholder="Пошук за ім'ям або номером картки" />
+            <button type="submit" class="btn-atm-outline" style="width:auto; padding: 0.75rem 1.25rem;">Знайти</button>
+            @if (!string.IsNullOrEmpty(Model.SearchQuery))
+            {
+                <a href="/Admin/Index" class="btn-atm-outline" style="width:auto; padding: 0.75rem 1.25rem;">Скинути</a>
+            }
+        </form>
+
+        <a href="/Admin/Create" class="btn-atm mb-3">+ Новий акаунт</a>
+
         @foreach (var account in Model.Accounts)
         {
-            <tr>
-                <td>@account.Id</td>
-                <td>@account.OwnerName</td>
-                <td>@account.CardNumber</td>
-                <td>@account.Balance.ToString("N2") ₴</td>
-                <td>
+            <div class="transaction-item" style="margin-bottom:0.5rem; flex-wrap:wrap; gap:0.5rem;">
+                <div class="transaction-info">
+                    <p class="transaction-type">@account.OwnerName</p>
+                    <p class="transaction-date">@account.CardNumber</p>
+                </div>
+                <div class="transaction-amount" style="color:#60a5fa;">
+                    @account.Balance.ToString("N2") ₴
+                </div>
+                <div>
                     @if (account.IsBlocked)
                     {
-                        <span class="badge bg-danger">Заблокована</span>
+                        <span style="color:#e94560; font-size:0.8rem;"> Заблокована</span>
                     }
                     else
                     {
-                        <span class="badge bg-success">Активна</span>
+                        <span style="color:#4ade80; font-size:0.8rem;"> Активна</span>
                     }
-                </td>
-                <td>
-                    <form method="post" action="/Admin/ToggleBlock">
-                        <input type="hidden" name="accountId" value="@account.Id" />
-                        <button type="submit" class="btn btn-sm @(account.IsBlocked ? "btn-success" : "btn-warning")">
-                            @(account.IsBlocked ? "Розблокувати" : "Заблокувати")
-                        </button>
-                    </form>
-                </td>
-            </tr>
+                </div>
+                <form method="post" action="/Admin/ToggleBlock">
+                    <input type="hidden" name="accountId" value="@account.Id" />
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-atm" style="width:auto; padding:0.5rem 1rem; font-size:0.85rem; background:@(account.IsBlocked ? "#4ade80" : "#e94560")">
+                        @(account.IsBlocked ? "Розблокувати" : "Заблокувати")
+                    </button>
+                </form>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>
