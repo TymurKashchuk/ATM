@@ -41,8 +41,8 @@
                             <p class="transaction-type">@t.Type</p>
                             <p class="transaction-date">@t.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
                         </div>
-                        <div class="transaction-amount @(t.Type == AtmSimulator.Models.TransactionType.Deposit ? "positive" : "negative")">
-                            @(t.Type == AtmSimulator.Models.TransactionType.Deposit ? "+" : "-")@t.Amount.ToString("N2") ₴
+                        <div class="transaction-amount @((t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"))) ? "positive" : "negative")">
+                            @((t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"))) ? "+" : "-")@t.Amount.ToString("N2") ₴
                         </div>
                     </div>
                 }
