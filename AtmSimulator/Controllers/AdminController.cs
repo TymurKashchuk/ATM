@@ -13,8 +13,17 @@ namespace AtmSimulator.Controllers
             _adminService = adminService;
         }
 
+        private IActionResult? CheckAdmin()
+        {
+            if (HttpContext.Session.GetString("IsAdmin") != "true")
+                return RedirectToAction("Login");
+            return null;
+        }
+
         public async Task<IActionResult> Index(string? search)
         {
+            if (CheckAdmin() is { } redirect) return redirect;
+
             var accounts = await _adminService.GetAccountsAsync(search);
 
             var viewModel = new AdminAccountListViewModel
@@ -29,16 +38,24 @@ namespace AtmSimulator.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleBlock(int accountId)
         {
+            if (CheckAdmin() is { } redirect) return redirect;
+
             await _adminService.ToggleBlockAsync(accountId);
             TempData["Success"] = "Статус картки змінено";
             return RedirectToAction("Index");
         }
 
-        public IActionResult Create() => View(new CreateAccountViewModel());
+        public IActionResult Create()
+        {
+            if (CheckAdmin() is { } redirect) return redirect;
+            return View(new CreateAccountViewModel());
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateAccountViewModel model)
         {
+            if (CheckAdmin() is { } redirect) return redirect;
+
             if (!ModelState.IsValid) return View(model);
 
             try
@@ -52,6 +69,28 @@ namespace AtmSimulator.Controllers
                 ModelState.AddModelError("", ex.Message);
                 return View(model);
             }
+        }
+
+        [HttpGet]
+        public IActionResult Login() => View();
+
+        [HttpPost]
+        public IActionResult Login(string password)
+        {
+            if (password == "admin")
+            {
+                HttpContext.Session.SetString("IsAdmin", "true");
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Error = "Невірний пароль";
+            return View();
+        }
+
+        public IActionResult AdminLogout()
+        {
+            HttpContext.Session.Remove("IsAdmin");
+            return RedirectToAction("Login");
         }
     }
 }

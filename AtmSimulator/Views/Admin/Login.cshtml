@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Admin Login";
+}
+
+<div class="atm-screen">
+    <div class="atm-card">
+        <div class="atm-header">
+            <h1>Admin Panel</h1>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-danger mb-3">@ViewBag.Error</div>
+        }
+
+        <form method="post">
+            <div class="form-group mb-3">
+                <label class="form-label">Пароль</label>
+                <input type="password" name="password" class="form-control" />
+            </div>
+            <button type="submit" class="btn-atm">Увійти →</button>
+        </form>
+    </div>
+</div>

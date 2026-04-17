@@ -24,6 +24,18 @@ namespace AtmSimulator.Middleware
 
             if (path.StartsWith("/admin"))
             {
+                if (path.StartsWith("/admin/login"))
+                {
+                    await _next(context);
+                    return;
+                }
+
+                if (context.Session.GetString("IsAdmin") != "true")
+                {
+                    context.Response.Redirect("/Admin/Login");
+                    return;
+                }
+
                 await _next(context);
                 return;
             }
