@@ -2,6 +2,7 @@
 using AtmSimulator.Models;
 using AtmSimulator.Patterns.Strategy;
 using Microsoft.EntityFrameworkCore;
+using AtmSimulator.Patterns.Factory;
 
 namespace AtmSimulator.Services
 {
@@ -43,13 +44,8 @@ namespace AtmSimulator.Services
                 cashEntry.Count -= count;
             }
 
-            _context.Transactions.Add(new Transaction
-            {
-                AccountId = accountId,
-                Type = TransactionType.Withdrawal,
-                Amount = amount,
-                Description = $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}"
-            });
+            var description = $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}";
+            _context.Transactions.Add(TransactionFactory.Create(TransactionType.Withdrawal, accountId, amount, description));
 
             await _context.SaveChangesAsync();
             return dispensed;

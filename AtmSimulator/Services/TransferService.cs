@@ -1,6 +1,7 @@
 ﻿using AtmSimulator.Data;
 using AtmSimulator.Models;
 using Microsoft.EntityFrameworkCore;
+using AtmSimulator.Patterns.Factory;
 
 namespace AtmSimulator.Services
 {
@@ -47,21 +48,15 @@ namespace AtmSimulator.Services
             sender.Balance -= amount;
             recipient.Balance += amount;
 
-            _context.Transactions.Add(new Transaction
-            {
-                AccountId = senderAccountId,
-                Type = TransactionType.Transfer,
-                Amount = amount,
-                Description = $"Переказ на картку **** {recipientCardNumber[^4..]}: -{amount} ₴"
-            });
+            _context.Transactions.Add(
+                TransactionFactory.Create(TransactionType.Transfer, senderAccountId, amount,
+                    $"Переказ на картку **** {recipientCardNumber[^4..]}: -{amount} ₴")
+            );
 
-            _context.Transactions.Add(new Transaction
-            {
-                AccountId = recipient.Id,
-                Type = TransactionType.Transfer,
-                Amount = amount,
-                Description = $"Переказ з картки **** {HttpContext_CardNumber(senderAccountId)}: +{amount} ₴"
-            });
+            _context.Transactions.Add(
+                TransactionFactory.Create(TransactionType.Transfer, recipient.Id, amount,
+                    $"Переказ з картки **** {HttpContext_CardNumber(senderAccountId)}: +{amount} ₴")
+            );
 
             await _context.SaveChangesAsync();
         }

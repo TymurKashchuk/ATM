@@ -1,5 +1,6 @@
 ﻿using AtmSimulator.Data;
 using AtmSimulator.Models;
+using AtmSimulator.Patterns.Factory;
 
 namespace AtmSimulator.Services
 {
@@ -25,13 +26,9 @@ namespace AtmSimulator.Services
 
             account.Balance += amount;
 
-            _context.Transactions.Add(new Transaction
-            {
-                AccountId = accountId,
-                Type = TransactionType.Deposit,
-                Amount = amount,
-                Description = $"Грошовий депозит: {amount} ₴"
-            });
+            _context.Transactions.Add(
+                TransactionFactory.Create(TransactionType.Deposit, accountId, amount)
+            );
 
             await _context.SaveChangesAsync();
         }
