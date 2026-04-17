@@ -6,8 +6,9 @@
 
 <div class="atm-screen">
     <div class="atm-card" style="max-width: 700px;">
-        <div class="atm-header">
+        <div class="atm-header" style="display:flex; justify-content:space-between; align-items:center;">
             <h1>Admin Panel</h1>
+            <a href="/Admin/AdminLogout" class="btn-atm-outline" style="width:auto; padding:0.5rem 1rem;">Вийти</a>
         </div>
 
         @if (TempData["Success"] != null)
@@ -40,11 +41,11 @@
                 <div>
                     @if (account.IsBlocked)
                     {
-                        <span style="color:#e94560; font-size:0.8rem;"> Заблокована</span>
+                        <span style="color:#e94560; font-size:0.8rem;">Заблокована</span>
                     }
                     else
                     {
-                        <span style="color:#4ade80; font-size:0.8rem;"> Активна</span>
+                        <span style="color:#4ade80; font-size:0.8rem;">Активна</span>
                     }
                 </div>
                 <form method="post" action="/Admin/ToggleBlock">
