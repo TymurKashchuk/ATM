@@ -7,10 +7,12 @@ namespace AtmSimulator.Controllers
     public class AdminController : Controller
     {
         private readonly AdminService _adminService;
+        private readonly IConfiguration _configuration;
 
-        public AdminController(AdminService adminService)
+        public AdminController(AdminService adminService, IConfiguration configuration)
         {
             _adminService = adminService;
+            _configuration = configuration;
         }
 
         private IActionResult? CheckAdmin()
@@ -77,7 +79,7 @@ namespace AtmSimulator.Controllers
         [HttpPost]
         public IActionResult Login(string password)
         {
-            if (password == "admin")
+            if (password == _configuration["Admin:Password"])
             {
                 HttpContext.Session.SetString("IsAdmin", "true");
                 return RedirectToAction("Index");
