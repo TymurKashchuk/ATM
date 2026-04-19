@@ -55,13 +55,13 @@ namespace AtmSimulator.Services
 
             _context.Transactions.Add(
                 TransactionFactory.Create(TransactionType.Transfer, recipient.Id, amount,
-                    $"Переказ з картки **** {HttpContext_CardNumber(senderAccountId)}: +{amount} ₴")
+                    $"Переказ з картки **** {GetSenderCardSuffix(senderAccountId)}: +{amount} ₴")
             );
 
             await _context.SaveChangesAsync();
         }
 
-        private string HttpContext_CardNumber(int accountId)
+        private string GetSenderCardSuffix(int accountId)
         {
             var card = _context.Cards.FirstOrDefault(c => c.AccountId == accountId);
             return card?.CardNumber[^4..] ?? "****";

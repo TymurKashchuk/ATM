@@ -40,8 +40,6 @@ namespace AtmSimulator.Controllers
 
         public IActionResult ChangePin()
         {
-            var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
-
             return View(new ChangePinViewModel());
         }
 
