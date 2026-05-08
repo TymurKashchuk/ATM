@@ -11,29 +11,41 @@ namespace AtmSimulator.Services
         private readonly AppDbContext _context;
         private readonly ICashDispenserStrategy _dispenserStrategy;
 
-        public WithdrawalService(AppDbContext context, ICashDispenserStrategy dispenserStrategy)
+        public WithdrawalService(
+            AppDbContext context,
+            ICashDispenserStrategy dispenserStrategy
+        )
         {
             _context = context;
             _dispenserStrategy = dispenserStrategy;
         }
 
-        public async Task<Dictionary<int, int>> GetAvailableCashAsync() {
+        public async Task<Dictionary<int, int>> GetAvailableCashAsync()
+        {
             var cashStorage = await _context.CashStorage.ToListAsync();
-            return cashStorage.ToDictionary(c => c.Denomination, c => c.Count);
+
+            return cashStorage.ToDictionary(
+                c => c.Denomination,
+                c => c.Count
+            );
         }
 
-        public async Task<Dictionary<int, int>> WithdrawAsync(int accountId, decimal amount) {
-            var account = await _context.Accounts.FindAsync(accountId)
-                ?? throw new InvalidOperationException("Акаунт не знайдено");
+        public async Task<Dictionary<int, int>> WithdrawAsync(
+            int accountId,
+            decimal amount
+        )
+        {
+            var account = await GetAccountAsync(accountId);
 
-            if (account.Balance < amount)
-                throw new InvalidOperationException("Недостатньо коштів");
-
-            if (amount % 20 != 0)
-                throw new InvalidOperationException("Сума має бути кратною 20");
+            ValidateBalance(account, amount);
+            ValidateWithdrawalAmount(amount);
 
             var availableCash = await GetAvailableCashAsync();
-            var dispensed = _dispenserStrategy.Calculate(amount, availableCash);
+
+            var dispensed = _dispenserStrategy.Calculate(
+                amount,
+                availableCash
+            );
 
             account.Balance -= amount;
 
@@ -41,14 +53,59 @@ namespace AtmSimulator.Services
             {
                 var cashEntry = await _context.CashStorage
                     .FirstAsync(c => c.Denomination == denomination);
+
                 cashEntry.Count -= count;
             }
 
-            var description = $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}";
-            _context.Transactions.Add(TransactionFactory.Create(TransactionType.Withdrawal, accountId, amount, description));
+            var description =
+                $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}";
+
+            _context.Transactions.Add(
+                TransactionFactory.Create(
+                    TransactionType.Withdrawal,
+                    accountId,
+                    amount,
+                    description
+                )
+            );
 
             await _context.SaveChangesAsync();
+
             return dispensed;
+        }
+
+        private async Task<Account> GetAccountAsync(int accountId)
+        {
+            var account = await _context.Accounts.FindAsync(accountId);
+
+            if (account == null)
+            {
+                throw new InvalidOperationException(
+                    "Акаунт не знайдено"
+                );
+            }
+
+            return account;
+        }
+
+        private void ValidateBalance(Account account, decimal amount)
+        {
+            if (account.Balance < amount)
+            {
+                throw new InvalidOperationException(
+                    "Недостатньо коштів"
+                );
+            }
+        }
+
+        private void ValidateWithdrawalAmount(decimal amount)
+        {
+            if (amount % 20 != 0)
+            {
+                throw new InvalidOperationException(
+                    "Сума має бути кратною 20"
+                );
+            }
         }
     }
 }
