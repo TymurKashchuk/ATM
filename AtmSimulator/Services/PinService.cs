@@ -1,4 +1,5 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
+using AtmSimulator.Services.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace AtmSimulator.Services
@@ -6,10 +7,16 @@ namespace AtmSimulator.Services
     public class PinService
     {
         private readonly AppDbContext _context;
+        private readonly IPinHasher _pinHasher;
 
-        public PinService(AppDbContext context)
+        public PinService(AppDbContext context, IPinHasher pinHasher)
         {
             _context = context;
+            _pinHasher = pinHasher;
+        }
+
+        public PinService(AppDbContext context) : this(context, new BCryptPinHasher())
+        {
         }
 
         public async Task ChangePinAsync(int accountId, string currentPin, string newPin, string confirmPin)
@@ -27,10 +34,10 @@ namespace AtmSimulator.Services
                 .FirstOrDefaultAsync(c => c.AccountId == accountId)
                 ?? throw new InvalidOperationException("Картку не знайдено");
 
-            if (card.PinHash != currentPin)
+            if (!_pinHasher.Verify(currentPin, card.PinHash))
                 throw new InvalidOperationException("Поточний PIN невірний");
 
-            card.PinHash = newPin;
+            card.PinHash = _pinHasher.Hash(newPin);
             await _context.SaveChangesAsync();
         }
     }

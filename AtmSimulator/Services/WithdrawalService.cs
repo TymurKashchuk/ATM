@@ -1,8 +1,9 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using AtmSimulator.Patterns.Strategy;
 using Microsoft.EntityFrameworkCore;
 using AtmSimulator.Patterns.Factory;
+using AtmSimulator.Patterns.Observer;
 
 namespace AtmSimulator.Services
 {
@@ -10,14 +11,17 @@ namespace AtmSimulator.Services
     {
         private readonly AppDbContext _context;
         private readonly ICashDispenserStrategy _dispenserStrategy;
+        private readonly TransactionNotifier? _notifier;
 
         public WithdrawalService(
             AppDbContext context,
-            ICashDispenserStrategy dispenserStrategy
+            ICashDispenserStrategy dispenserStrategy,
+            TransactionNotifier? notifier = null
         )
         {
             _context = context;
             _dispenserStrategy = dispenserStrategy;
+            _notifier = notifier;
         }
 
         public async Task<Dictionary<int, int>> GetAvailableCashAsync()
@@ -47,31 +51,65 @@ namespace AtmSimulator.Services
                 availableCash
             );
 
-            account.Balance -= amount;
-
-            foreach (var (denomination, count) in dispensed)
+            Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? dbTransaction = null;
+            if (_context.Database.IsRelational())
             {
-                var cashEntry = await _context.CashStorage
-                    .FirstAsync(c => c.Denomination == denomination);
-
-                cashEntry.Count -= count;
+                dbTransaction = await _context.Database.BeginTransactionAsync();
             }
 
-            var description =
-                $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}";
+            try
+            {
+                account.Balance -= amount;
 
-            _context.Transactions.Add(
-                TransactionFactory.Create(
+                foreach (var (denomination, count) in dispensed)
+                {
+                    var cashEntry = await _context.CashStorage
+                        .FirstAsync(c => c.Denomination == denomination);
+
+                    cashEntry.Count -= count;
+                }
+
+                var description =
+                    $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}";
+
+                var transaction = TransactionFactory.Create(
                     TransactionType.Withdrawal,
                     accountId,
                     amount,
                     description
-                )
-            );
+                );
 
-            await _context.SaveChangesAsync();
+                _context.Transactions.Add(transaction);
 
-            return dispensed;
+                await _context.SaveChangesAsync();
+
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.CommitAsync();
+                }
+
+                if (_notifier != null)
+                {
+                    await _notifier.NotifyAsync(transaction);
+                }
+
+                return dispensed;
+            }
+            catch
+            {
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.RollbackAsync();
+                }
+                throw;
+            }
+            finally
+            {
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.DisposeAsync();
+                }
+            }
         }
 
         private async Task<Account> GetAccountAsync(int accountId)

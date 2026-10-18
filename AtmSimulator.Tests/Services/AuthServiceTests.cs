@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using AtmSimulator.Services;
 using FluentAssertions;
@@ -70,6 +70,25 @@ namespace AtmSimulator.Tests.Services
         }
 
         [Fact]
+        public async Task ValidatePinAsync_LegacyPlainTextPin_TransparentlyMigratesToBCryptHash()
+        {
+            var db = CreateDb();
+            var hasher = new AtmSimulator.Services.Security.BCryptPinHasher();
+            var service = new AuthService(db, hasher);
+            var card = await service.FindCardAsync("1234567890001111");
+
+            // Спочатку в базі був plaintext "1234"
+            card!.PinHash.Should().Be("1234");
+
+            var result = await service.ValidatePinAsync(card, "1234");
+
+            result.Should().BeTrue();
+            // Після успішної аутентифікації пароль автоматично оновився на безпечний BCrypt хеш
+            card.PinHash.Should().NotBe("1234");
+            hasher.Verify("1234", card.PinHash).Should().BeTrue();
+        }
+
+        [Fact]
         public async Task ValidatePinAsync_WrongPin_ReturnsFalse()
         {
             var db = CreateDb();
@@ -133,6 +152,21 @@ namespace AtmSimulator.Tests.Services
             var remaining = service.GetRemainingAttempts(card!);
 
             remaining.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task ValidatePinAsync_ExpiredCard_ReturnsFalse()
+        {
+            var db = CreateDb();
+            var card = db.Cards.Find(1)!;
+            card.ExpiryDate = DateTime.UtcNow.AddDays(-1); // Картка прострочена
+            await db.SaveChangesAsync();
+
+            var service = new AuthService(db);
+            var result = await service.ValidatePinAsync(card, "1234");
+
+            result.Should().BeFalse();
+            card.IsExpired.Should().BeTrue();
         }
     }
 }

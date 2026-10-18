@@ -1,17 +1,20 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using Microsoft.EntityFrameworkCore;
 using AtmSimulator.Patterns.Factory;
+using AtmSimulator.Patterns.Observer;
 
 namespace AtmSimulator.Services
 {
     public class TransferService
     {
         private readonly AppDbContext _context;
+        private readonly TransactionNotifier? _notifier;
 
-        public TransferService(AppDbContext context)
+        public TransferService(AppDbContext context, TransactionNotifier? notifier = null)
         {
             _context = context;
+            _notifier = notifier;
         }
 
         public async Task<Account> FindRecipientAsync(string cardNumber)
@@ -45,26 +48,59 @@ namespace AtmSimulator.Services
 
             var recipient = recipientCard.Account!;
 
-            sender.Balance -= amount;
-            recipient.Balance += amount;
+            var senderCard = await _context.Cards.FirstOrDefaultAsync(c => c.AccountId == senderAccountId);
+            var senderCardSuffix = senderCard != null && senderCard.CardNumber.Length >= 4
+                ? senderCard.CardNumber[^4..]
+                : "****";
 
-            _context.Transactions.Add(
-                TransactionFactory.Create(TransactionType.Transfer, senderAccountId, amount,
-                    $"Переказ на картку **** {recipientCardNumber[^4..]}: -{amount} ₴")
-            );
+            Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? dbTransaction = null;
+            if (_context.Database.IsRelational())
+            {
+                dbTransaction = await _context.Database.BeginTransactionAsync();
+            }
 
-            _context.Transactions.Add(
-                TransactionFactory.Create(TransactionType.Transfer, recipient.Id, amount,
-                    $"Переказ з картки **** {GetSenderCardSuffix(senderAccountId)}: +{amount} ₴")
-            );
+            try
+            {
+                sender.Balance -= amount;
+                recipient.Balance += amount;
 
-            await _context.SaveChangesAsync();
-        }
+                var senderTransaction = TransactionFactory.Create(TransactionType.Transfer, senderAccountId, amount,
+                    $"Переказ на картку **** {recipientCardNumber[^4..]}: -{amount} ₴");
 
-        private string GetSenderCardSuffix(int accountId)
-        {
-            var card = _context.Cards.FirstOrDefault(c => c.AccountId == accountId);
-            return card?.CardNumber[^4..] ?? "****";
+                var recipientTransaction = TransactionFactory.Create(TransactionType.Transfer, recipient.Id, amount,
+                    $"Переказ з картки **** {senderCardSuffix}: +{amount} ₴");
+
+                _context.Transactions.Add(senderTransaction);
+                _context.Transactions.Add(recipientTransaction);
+
+                await _context.SaveChangesAsync();
+
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.CommitAsync();
+                }
+
+                if (_notifier != null)
+                {
+                    await _notifier.NotifyAsync(senderTransaction);
+                    await _notifier.NotifyAsync(recipientTransaction);
+                }
+            }
+            catch
+            {
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.RollbackAsync();
+                }
+                throw;
+            }
+            finally
+            {
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.DisposeAsync();
+                }
+            }
         }
     }
 }

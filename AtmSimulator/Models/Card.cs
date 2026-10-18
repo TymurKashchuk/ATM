@@ -1,4 +1,4 @@
-﻿namespace AtmSimulator.Models
+namespace AtmSimulator.Models
 {
     public class Card
     {
@@ -8,6 +8,7 @@
         public bool IsBlocked { get; set; } = false;
         public int FailedPinAttempts { get; set; } = 0;
         public DateTime ExpiryDate { get; set; }
+        public bool IsExpired => ExpiryDate != default && ExpiryDate < DateTime.UtcNow;
 
         public int AccountId { get; set; }
         public Account? Account { get; set; }

@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Models;
+using AtmSimulator.Models;
 
 namespace AtmSimulator.Patterns.Factory
 {
@@ -8,33 +8,33 @@ namespace AtmSimulator.Patterns.Factory
         {
             return type switch
             {
-                TransactionType.Withdrawal => CreateWithdrawal(accountId, amount),
-                TransactionType.Deposit => CreateDeposit(accountId, amount),
+                TransactionType.Withdrawal => CreateWithdrawal(accountId, amount, description),
+                TransactionType.Deposit => CreateDeposit(accountId, amount, description),
                 TransactionType.Transfer => CreateTransfer(accountId, amount, description),
                 _ => throw new ArgumentException($"Unknown transaction type: {type}")
             };
         }
 
-        private static Transaction CreateWithdrawal(int accountId, decimal amount)
+        private static Transaction CreateWithdrawal(int accountId, decimal amount, string? description)
         {
             return new Transaction
             {
                 Type = TransactionType.Withdrawal,
                 AccountId = accountId,
                 Amount = amount,
-                Description = $"ATM Withdrawal of {amount:N2} ₴",
+                Description = description ?? $"ATM Withdrawal of {amount:N2} ₴",
                 CreatedAt = DateTime.UtcNow
             };
         }
 
-        private static Transaction CreateDeposit(int accountId, decimal amount)
+        private static Transaction CreateDeposit(int accountId, decimal amount, string? description)
         {
             return new Transaction
             {
                 Type = TransactionType.Deposit,
                 AccountId = accountId,
                 Amount = amount,
-                Description = $"ATM Deposit of {amount:N2} ₴",
+                Description = description ?? $"ATM Deposit of {amount:N2} ₴",
                 CreatedAt = DateTime.UtcNow
             };
         }

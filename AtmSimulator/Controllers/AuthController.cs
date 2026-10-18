@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Services;
+using AtmSimulator.Services;
 using AtmSimulator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +41,12 @@ namespace AtmSimulator.Controllers
             if (card.IsBlocked)
             {
                 ModelState.AddModelError("", "Картку заблоковано");
+                return View(model);
+            }
+
+            if (card.IsExpired)
+            {
+                ModelState.AddModelError("", "Термін дії картки закінчився");
                 return View(model);
             }
 
