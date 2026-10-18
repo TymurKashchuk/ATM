@@ -53,8 +53,7 @@ namespace AtmSimulator.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError("", ex.Message);
-                return View(model);
+                return this.InvalidOpAsModelError(ex, model);
             }
         }
 
@@ -86,8 +85,7 @@ namespace AtmSimulator.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError("", ex.Message);
-                return View(model);
+                return this.InvalidOpAsModelError(ex, model);
             }
         }
 
@@ -119,8 +117,7 @@ namespace AtmSimulator.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError("", ex.Message);
-                return View(model);
+                return this.InvalidOpAsModelError(ex, model);
             }
         }
 

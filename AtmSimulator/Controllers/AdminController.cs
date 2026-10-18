@@ -1,4 +1,5 @@
-﻿using AtmSimulator.Services;
+﻿using AtmSimulator.Filters;
+using AtmSimulator.Services;
 using AtmSimulator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,16 +16,11 @@ namespace AtmSimulator.Controllers
             _configuration = configuration;
         }
 
-        private IActionResult? CheckAdmin()
-        {
-            if (HttpContext.Session.GetString("IsAdmin") != "true")
-                return RedirectToAction("Login");
-            return null;
-        }
 
+        [AdminAuthorize]
         public async Task<IActionResult> Index(string? search)
         {
-            if (CheckAdmin() is { } redirect) return redirect;
+            
 
             var accounts = await _adminService.GetAccountsAsync(search);
 
@@ -38,25 +34,23 @@ namespace AtmSimulator.Controllers
         }
 
         [HttpPost]
+        [AdminAuthorize]
         public async Task<IActionResult> ToggleBlock(int accountId)
         {
-            if (CheckAdmin() is { } redirect) return redirect;
-
             await _adminService.ToggleBlockAsync(accountId);
             TempData["Success"] = "Статус картки змінено";
             return RedirectToAction("Index");
         }
-
+        [AdminAuthorize]
         public IActionResult Create()
         {
-            if (CheckAdmin() is { } redirect) return redirect;
             return View(new CreateAccountViewModel());
         }
 
         [HttpPost]
+        [AdminAuthorize]
         public async Task<IActionResult> Create(CreateAccountViewModel model)
         {
-            if (CheckAdmin() is { } redirect) return redirect;
 
             if (!ModelState.IsValid) return View(model);
 
