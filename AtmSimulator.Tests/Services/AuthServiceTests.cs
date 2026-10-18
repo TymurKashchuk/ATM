@@ -153,5 +153,20 @@ namespace AtmSimulator.Tests.Services
 
             remaining.Should().Be(2);
         }
+
+        [Fact]
+        public async Task ValidatePinAsync_ExpiredCard_ReturnsFalse()
+        {
+            var db = CreateDb();
+            var card = db.Cards.Find(1)!;
+            card.ExpiryDate = DateTime.UtcNow.AddDays(-1); // Картка прострочена
+            await db.SaveChangesAsync();
+
+            var service = new AuthService(db);
+            var result = await service.ValidatePinAsync(card, "1234");
+
+            result.Should().BeFalse();
+            card.IsExpired.Should().BeTrue();
+        }
     }
 }

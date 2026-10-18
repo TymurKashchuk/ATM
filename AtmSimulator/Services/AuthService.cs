@@ -28,7 +28,7 @@ namespace AtmSimulator.Services
         }
 
         public async Task<bool> ValidatePinAsync(Card card, string pin) {
-            if (card.IsBlocked) return false;
+            if (card.IsBlocked || card.IsExpired) return false;
 
             if (!_pinHasher.Verify(pin, card.PinHash))
             {
