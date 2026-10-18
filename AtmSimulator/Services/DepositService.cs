@@ -1,16 +1,19 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using AtmSimulator.Patterns.Factory;
+using AtmSimulator.Patterns.Observer;
 
 namespace AtmSimulator.Services
 {
     public class DepositService
     {
         private readonly AppDbContext _context;
+        private readonly TransactionNotifier? _notifier;
 
-        public DepositService(AppDbContext context)
+        public DepositService(AppDbContext context, TransactionNotifier? notifier = null)
         {
             _context = context;
+            _notifier = notifier;
         }
 
         public async Task DepositAsync(int accountId, decimal amount)
@@ -26,11 +29,15 @@ namespace AtmSimulator.Services
 
             account.Balance += amount;
 
-            _context.Transactions.Add(
-                TransactionFactory.Create(TransactionType.Deposit, accountId, amount)
-            );
+            var transaction = TransactionFactory.Create(TransactionType.Deposit, accountId, amount);
+            _context.Transactions.Add(transaction);
 
             await _context.SaveChangesAsync();
+
+            if (_notifier != null)
+            {
+                await _notifier.NotifyAsync(transaction);
+            }
         }
     }
 }

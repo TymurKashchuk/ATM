@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using AtmSimulator.Services;
 using AtmSimulator.Patterns.Strategy;
@@ -115,6 +115,28 @@ namespace AtmSimulator.Tests.Services
                 t.AccountId == 1 &&
                 t.Type == TransactionType.Withdrawal &&
                 t.Amount == 500m);
+        }
+
+        [Fact]
+        public async Task Withdraw_WithObserver_NotifiesObserver()
+        {
+            var db = CreateDb();
+            db.Accounts.Add(new Account { Id = 1, Balance = 1000m });
+            await db.SaveChangesAsync();
+
+            var observerMock = new Mock<AtmSimulator.Patterns.Observer.ITransactionObserver>();
+            var notifier = new AtmSimulator.Patterns.Observer.TransactionNotifier();
+            notifier.Subscribe(observerMock.Object);
+
+            var strategy = new GreedyCashDispenserStrategy();
+            var service = new WithdrawalService(db, strategy, notifier);
+
+            await service.WithdrawAsync(1, 200m);
+
+            observerMock.Verify(o => o.OnTransactionAsync(It.Is<Transaction>(t =>
+                t.AccountId == 1 &&
+                t.Type == TransactionType.Withdrawal &&
+                t.Amount == 200m)), Times.Once);
         }
     }
 }

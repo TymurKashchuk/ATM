@@ -1,8 +1,9 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using AtmSimulator.Patterns.Strategy;
 using Microsoft.EntityFrameworkCore;
 using AtmSimulator.Patterns.Factory;
+using AtmSimulator.Patterns.Observer;
 
 namespace AtmSimulator.Services
 {
@@ -10,11 +11,13 @@ namespace AtmSimulator.Services
     {
         private readonly AppDbContext _context;
         private readonly ICashDispenserStrategy _dispenserStrategy;
+        private readonly TransactionNotifier? _notifier;
 
-        public WithdrawalService(AppDbContext context, ICashDispenserStrategy dispenserStrategy)
+        public WithdrawalService(AppDbContext context, ICashDispenserStrategy dispenserStrategy, TransactionNotifier? notifier = null)
         {
             _context = context;
             _dispenserStrategy = dispenserStrategy;
+            _notifier = notifier;
         }
 
         public async Task<Dictionary<int, int>> GetAvailableCashAsync() {
@@ -45,9 +48,16 @@ namespace AtmSimulator.Services
             }
 
             var description = $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}";
-            _context.Transactions.Add(TransactionFactory.Create(TransactionType.Withdrawal, accountId, amount, description));
+            var transaction = TransactionFactory.Create(TransactionType.Withdrawal, accountId, amount, description);
+            _context.Transactions.Add(transaction);
 
             await _context.SaveChangesAsync();
+
+            if (_notifier != null)
+            {
+                await _notifier.NotifyAsync(transaction);
+            }
+
             return dispensed;
         }
     }

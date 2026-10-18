@@ -1,17 +1,20 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using Microsoft.EntityFrameworkCore;
 using AtmSimulator.Patterns.Factory;
+using AtmSimulator.Patterns.Observer;
 
 namespace AtmSimulator.Services
 {
     public class TransferService
     {
         private readonly AppDbContext _context;
+        private readonly TransactionNotifier? _notifier;
 
-        public TransferService(AppDbContext context)
+        public TransferService(AppDbContext context, TransactionNotifier? notifier = null)
         {
             _context = context;
+            _notifier = notifier;
         }
 
         public async Task<Account> FindRecipientAsync(string cardNumber)
@@ -48,17 +51,22 @@ namespace AtmSimulator.Services
             sender.Balance -= amount;
             recipient.Balance += amount;
 
-            _context.Transactions.Add(
-                TransactionFactory.Create(TransactionType.Transfer, senderAccountId, amount,
-                    $"Переказ на картку **** {recipientCardNumber[^4..]}: -{amount} ₴")
-            );
+            var senderTransaction = TransactionFactory.Create(TransactionType.Transfer, senderAccountId, amount,
+                $"Переказ на картку **** {recipientCardNumber[^4..]}: -{amount} ₴");
 
-            _context.Transactions.Add(
-                TransactionFactory.Create(TransactionType.Transfer, recipient.Id, amount,
-                    $"Переказ з картки **** {GetSenderCardSuffix(senderAccountId)}: +{amount} ₴")
-            );
+            var recipientTransaction = TransactionFactory.Create(TransactionType.Transfer, recipient.Id, amount,
+                $"Переказ з картки **** {GetSenderCardSuffix(senderAccountId)}: +{amount} ₴");
+
+            _context.Transactions.Add(senderTransaction);
+            _context.Transactions.Add(recipientTransaction);
 
             await _context.SaveChangesAsync();
+
+            if (_notifier != null)
+            {
+                await _notifier.NotifyAsync(senderTransaction);
+                await _notifier.NotifyAsync(recipientTransaction);
+            }
         }
 
         private string GetSenderCardSuffix(int accountId)

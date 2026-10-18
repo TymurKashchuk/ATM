@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Models;
+using AtmSimulator.Models;
 using AtmSimulator.Patterns.Factory;
 using FluentAssertions;
 using System;
@@ -38,6 +38,22 @@ namespace AtmSimulator.Tests.Patterns
 
             transaction.Type.Should().Be(TransactionType.Transfer);
             transaction.Description.Should().Contain("acc2");
+        }
+
+        [Fact]
+        public void CreateWithdrawal_WithCustomDescription_SetsDescription()
+        {
+            var transaction = TransactionFactory.Create(TransactionType.Withdrawal, 1, 300m, "Зняття: 1x200₴, 1x100₴");
+
+            transaction.Description.Should().Be("Зняття: 1x200₴, 1x100₴");
+        }
+
+        [Fact]
+        public void CreateDeposit_WithCustomDescription_SetsDescription()
+        {
+            var transaction = TransactionFactory.Create(TransactionType.Deposit, 1, 400m, "Поповнення через термінал");
+
+            transaction.Description.Should().Be("Поповнення через термінал");
         }
 
         [Fact]
