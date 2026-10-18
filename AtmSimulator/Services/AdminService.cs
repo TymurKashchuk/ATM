@@ -1,5 +1,6 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
+using AtmSimulator.Services.Security;
 using AtmSimulator.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +9,16 @@ namespace AtmSimulator.Services
     public class AdminService
     {
         private readonly AppDbContext _context;
+        private readonly IPinHasher _pinHasher;
 
-        public AdminService(AppDbContext context)
+        public AdminService(AppDbContext context, IPinHasher pinHasher)
         {
             _context = context;
+            _pinHasher = pinHasher;
+        }
+
+        public AdminService(AppDbContext context) : this(context, new BCryptPinHasher())
+        {
         }
 
         public async Task<List<AdminAccountItemViewModel>> GetAccountsAsync(string? search = null)
@@ -66,9 +73,10 @@ namespace AtmSimulator.Services
             var card = new Card
             {
                 CardNumber = model.CardNumber,
-                PinHash = model.Pin,
+                PinHash = _pinHasher.Hash(model.Pin),
                 AccountId = account.Id,
-                IsBlocked = false
+                IsBlocked = false,
+                ExpiryDate = DateTime.UtcNow.AddYears(3)
             };
 
             _context.Cards.Add(card);

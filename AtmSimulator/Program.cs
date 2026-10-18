@@ -4,6 +4,7 @@ using AtmSimulator.Services;
 using Microsoft.EntityFrameworkCore;
 using AtmSimulator.Patterns.Observer;
 using AtmSimulator.Middleware;
+using AtmSimulator.Services.Security;
 
 namespace AtmSimulator
 {
@@ -17,6 +18,7 @@ namespace AtmSimulator
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
 
+            builder.Services.AddSingleton<IPinHasher, BCryptPinHasher>();
             builder.Services.AddScoped<AuthService>();
 
             builder.Services.AddDistributedMemoryCache();

@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using AtmSimulator.Services;
 using FluentAssertions;
@@ -35,11 +35,14 @@ namespace AtmSimulator.Tests.Services
         public async Task ChangePin_ValidData_UpdatesPin()
         {
             var db = CreateDb();
-            var service = new PinService(db);
+            var hasher = new AtmSimulator.Services.Security.BCryptPinHasher();
+            var service = new PinService(db, hasher);
 
             await service.ChangePinAsync(1, "1234", "5678", "5678");
 
-            db.Cards.Find(1)!.PinHash.Should().Be("5678");
+            var updatedCard = db.Cards.Find(1)!;
+            updatedCard.PinHash.Should().NotBe("5678"); // He зберігається відкритим текстом
+            hasher.Verify("5678", updatedCard.PinHash).Should().BeTrue();
         }
 
         [Fact]
