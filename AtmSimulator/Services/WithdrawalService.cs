@@ -38,27 +38,56 @@ namespace AtmSimulator.Services
             var availableCash = await GetAvailableCashAsync();
             var dispensed = _dispenserStrategy.Calculate(amount, availableCash);
 
-            account.Balance -= amount;
-
-            foreach (var (denomination, count) in dispensed)
+            Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? dbTransaction = null;
+            if (_context.Database.IsRelational())
             {
-                var cashEntry = await _context.CashStorage
-                    .FirstAsync(c => c.Denomination == denomination);
-                cashEntry.Count -= count;
+                dbTransaction = await _context.Database.BeginTransactionAsync();
             }
 
-            var description = $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}";
-            var transaction = TransactionFactory.Create(TransactionType.Withdrawal, accountId, amount, description);
-            _context.Transactions.Add(transaction);
-
-            await _context.SaveChangesAsync();
-
-            if (_notifier != null)
+            try
             {
-                await _notifier.NotifyAsync(transaction);
-            }
+                account.Balance -= amount;
 
-            return dispensed;
+                foreach (var (denomination, count) in dispensed)
+                {
+                    var cashEntry = await _context.CashStorage
+                        .FirstAsync(c => c.Denomination == denomination);
+                    cashEntry.Count -= count;
+                }
+
+                var description = $"Зняття готівки: {string.Join(", ", dispensed.Select(d => $"{d.Value}x{d.Key}₴"))}";
+                var transaction = TransactionFactory.Create(TransactionType.Withdrawal, accountId, amount, description);
+                _context.Transactions.Add(transaction);
+
+                await _context.SaveChangesAsync();
+
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.CommitAsync();
+                }
+
+                if (_notifier != null)
+                {
+                    await _notifier.NotifyAsync(transaction);
+                }
+
+                return dispensed;
+            }
+            catch
+            {
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.RollbackAsync();
+                }
+                throw;
+            }
+            finally
+            {
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.DisposeAsync();
+                }
+            }
         }
     }
 }
