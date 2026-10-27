@@ -1,51 +1,63 @@
-﻿@model AtmSimulator.ViewModels.ChangePinViewModel;
+@model AtmSimulator.ViewModels.ChangePinViewModel
 
 @{
-	ViewData["Title"] = "Change PIN";
+    ViewData["Title"] = "Зміна PIN-коду";
 }
 
 <div class="atm-screen">
-	<div class="atm-card">
-		<div class="atm-header">
-			<h1>Change PIN</h1>
-			<p class="text-muted">Enter your current and new PIN</p>
-		</div>
+    <div class="atm-card" style="max-width: 440px;">
+        <div class="atm-header">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+                <img src="~/icons/pin.svg" alt="PIN" class="svg-icon" style="color: var(--primary);" />
+            </div>
+            <h1>Зміна PIN-коду</h1>
+            <p class="text-muted">Введіть поточний та новий 4-значний PIN</p>
+        </div>
 
         <form asp-action="ChangePin" method="post">
-            <div class="form-group">
-                <label asp-for="CurrentPin" class="form-label">Current PIN</label>
+            <div class="form-group mb-3">
+                <label asp-for="CurrentPin" class="form-label">Поточний PIN</label>
                 <input asp-for="CurrentPin"
                        class="form-control text-center"
                        type="password"
                        placeholder="••••"
-                       maxlength="4" />
-                <span asp-validation-for="CurrentPin" class="text-danger"></span>
+                       maxlength="4"
+                       style="letter-spacing: 0.3em; font-size: 1.25rem;" />
+                <span asp-validation-for="CurrentPin" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div class="form-group mt-3">
-                <label asp-for="NewPin" class="form-label">New PIN</label>
+            <div class="form-group mb-3">
+                <label asp-for="NewPin" class="form-label">Новий PIN (4 цифри)</label>
                 <input asp-for="NewPin"
                        class="form-control text-center"
                        type="password"
                        placeholder="••••"
-                       maxlength="4" />
-                <span asp-validation-for="NewPin" class="text-danger"></span>
+                       maxlength="4"
+                       style="letter-spacing: 0.3em; font-size: 1.25rem;" />
+                <span asp-validation-for="NewPin" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div class="form-group mt-3">
-                <label asp-for="ConfirmPin" class="form-label">Confirm New PIN</label>
+            <div class="form-group mb-3">
+                <label asp-for="ConfirmPin" class="form-label">Підтвердження нового PIN</label>
                 <input asp-for="ConfirmPin"
                        class="form-control text-center"
                        type="password"
                        placeholder="••••"
-                       maxlength="4" />
-                <span asp-validation-for="ConfirmPin" class="text-danger"></span>
+                       maxlength="4"
+                       style="letter-spacing: 0.3em; font-size: 1.25rem;" />
+                <span asp-validation-for="ConfirmPin" class="text-danger mt-1 d-block"></span>
             </div>
 
             <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
 
-            <button type="submit" class="btn-atm mt-4">Change PIN →</button>
-            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">← Back</a>
+            <button type="submit" class="btn-atm mt-4">
+                <img src="~/icons/check.svg" alt="Save" class="svg-icon" style="width: 18px; height: 18px;" />
+                <span>Зберегти новий PIN</span>
+            </button>
+            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">
+                <img src="~/icons/arrow-left.svg" alt="Back" class="svg-icon" style="width: 18px; height: 18px;" />
+                <span>Назад у меню</span>
+            </a>
         </form>
-	</div>
+    </div>
 </div>

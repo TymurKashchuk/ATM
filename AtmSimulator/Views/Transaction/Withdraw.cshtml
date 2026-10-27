@@ -1,34 +1,54 @@
-﻿@model AtmSimulator.ViewModels.WithdrawalViewModel
+@model AtmSimulator.ViewModels.WithdrawalViewModel
 
 @{
-    ViewData["Title"] = "Withdraw Cash";
+    ViewData["Title"] = "Зняття готівки";
 }
 
 <div class="atm-screen">
-    <div class="atm-card">
+    <div class="atm-card" style="max-width: 480px;">
         <div class="atm-header">
-            <h1>Withdraw Cash</h1>
-            <p class="text-muted">Available: <strong style="color:#4ade80">@Model.CurrentBalance.ToString("N2") ₴</strong></p>
+            <h1>Зняття готівки</h1>
+            <p class="text-muted">Оберіть швидку суму або введіть довільну</p>
+        </div>
+
+        <div class="balance-box" style="padding: 0.85rem 1rem; margin-bottom: 1.25rem;">
+            <p class="balance-label" style="margin-bottom: 0.15rem;">Доступний баланс</p>
+            <p class="balance-amount" style="font-size: 1.5rem;">@Model.CurrentBalance.ToString("N2") ₴</p>
         </div>
 
         <form asp-action="Withdraw" method="post">
-            <div class="form-group">
-                <label asp-for="Amount" class="form-label">Amount (multiple of 20)</label>
-                <input asp-for="Amount" class="form-control" placeholder="e.g. 500" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label asp-for="Amount" class="form-label">Сума зняття (кратна 20 ₴)</label>
+                <div style="position: relative;">
+                    <input asp-for="Amount"
+                           id="Amount"
+                           class="form-control"
+                           placeholder="Наприклад: 500"
+                           style="font-size: 1.25rem; font-weight: 700; padding-left: 2.25rem;" />
+                    <span style="position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--text-muted);">₴</span>
+                </div>
+                <span asp-validation-for="Amount" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div class="quick-amounts">
+            <!-- Швидкі суми -->
+            <label class="form-label">Швидкий вибір:</label>
+            <div class="quick-amounts" style="margin-top: 0;">
                 <button type="button" class="quick-btn" onclick="setAmount(100)">100 ₴</button>
                 <button type="button" class="quick-btn" onclick="setAmount(200)">200 ₴</button>
                 <button type="button" class="quick-btn" onclick="setAmount(500)">500 ₴</button>
-                <button type="button" class="quick-btn" onclick="setAmount(1000)">1000 ₴</button>
+                <button type="button" class="quick-btn" onclick="setAmount(1000)">1 000 ₴</button>
             </div>
 
             <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
 
-            <button type="submit" class="btn-atm mt-4">Withdraw →</button>
-            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">← Back</a>
+            <button type="submit" class="btn-atm mt-4">
+                <img src="~/icons/withdraw.svg" alt="Withdraw" class="svg-icon" style="width: 18px; height: 18px;" />
+                <span>Отримати кошти</span>
+            </button>
+            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">
+                <img src="~/icons/arrow-left.svg" alt="Back" class="svg-icon" style="width: 18px; height: 18px;" />
+                <span>Назад у меню</span>
+            </a>
         </form>
     </div>
 </div>
