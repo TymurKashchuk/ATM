@@ -1,18 +1,48 @@
-﻿@model AtmSimulator.ViewModels.AccountViewModel
+@model AtmSimulator.ViewModels.AccountViewModel
 
 @{
-	ViewData["Title"] = "Main Menu";
+    ViewData["Title"] = "Головне меню";
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 480px;">
+    <div class="atm-card" style="max-width: 500px;">
 
-        <div class="atm-header">
-            <p class="text-muted">Welcome</p>
-            <h1>@Model.OwnerName</h1>
-            <p class="text-muted">
-                **** **** **** @Model.CardNumber[^4..]
-            </p>
+        <!-- Компонент банківської картки -->
+        <div class="bank-card">
+            <div class="bank-card-header">
+                <div>
+                    <p class="bank-card-title">Банківська картка</p>
+                    <h3 class="bank-card-owner">@Model.OwnerName</h3>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <img src="~/icons/contactless.svg" alt="NFC" class="svg-icon" style="opacity: 0.7;" />
+                    <div class="bank-card-chip">
+                        <div class="bank-card-chip-cell"></div>
+                        <div class="bank-card-chip-cell"></div>
+                        <div class="bank-card-chip-cell"></div>
+                        <div class="bank-card-chip-cell"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bank-card-footer">
+                <div>
+                    <p class="bank-card-number">•••• •••• •••• @Model.CardNumber[^4..]</p>
+                </div>
+                <div>
+                    @if (Model.IsBlocked)
+                    {
+                        <span class="bank-card-status blocked">Заблоковано</span>
+                    }
+                    else
+                    {
+                        <span class="bank-card-status">
+                            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:currentColor;"></span>
+                            Активна
+                        </span>
+                    }
+                </div>
+            </div>
         </div>
 
         @if (TempData["Success"] != null)
@@ -22,30 +52,74 @@
             </div>
         }
 
+        <!-- Баланс рахунку -->
         <div class="balance-box">
-            <p class="balance-label">Available Balance</p>
+            <p class="balance-label">Доступний баланс</p>
             <p class="balance-amount">@Model.Balance.ToString("N2") ₴</p>
         </div>
 
+        <!-- Сітка дій банкомата -->
         <div class="menu-grid">
             <a asp-controller="Transaction" asp-action="Withdraw" class="menu-btn">
-                Withdraw
+                <div class="menu-btn-icon">
+                    <img src="~/icons/withdraw.svg" alt="Withdraw" class="svg-icon" />
+                </div>
+                <div>
+                    <h4 class="menu-btn-title">Зняти готівку</h4>
+                    <p class="menu-btn-desc">Купюри від 20 ₴</p>
+                </div>
             </a>
+
             <a asp-controller="Transaction" asp-action="Deposit" class="menu-btn">
-                Deposit
+                <div class="menu-btn-icon">
+                    <img src="~/icons/deposit.svg" alt="Deposit" class="svg-icon" />
+                </div>
+                <div>
+                    <h4 class="menu-btn-title">Поповнити</h4>
+                    <p class="menu-btn-desc">Внесення в термінал</p>
+                </div>
             </a>
+
             <a asp-controller="Transaction" asp-action="Transfer" class="menu-btn">
-                Transfer
+                <div class="menu-btn-icon">
+                    <img src="~/icons/transfer.svg" alt="Transfer" class="svg-icon" />
+                </div>
+                <div>
+                    <h4 class="menu-btn-title">Переказ</h4>
+                    <p class="menu-btn-desc">На іншу картку</p>
+                </div>
             </a>
+
             <a asp-controller="Transaction" asp-action="History" class="menu-btn">
-                History
+                <div class="menu-btn-icon">
+                    <img src="~/icons/history.svg" alt="History" class="svg-icon" />
+                </div>
+                <div>
+                    <h4 class="menu-btn-title">Історія</h4>
+                    <p class="menu-btn-desc">Виписка операцій</p>
+                </div>
             </a>
+
             <a asp-controller="Account" asp-action="ChangePin" class="menu-btn">
-                Change PIN
+                <div class="menu-btn-icon">
+                    <img src="~/icons/pin.svg" alt="PIN" class="svg-icon" />
+                </div>
+                <div>
+                    <h4 class="menu-btn-title">Зміна PIN</h4>
+                    <p class="menu-btn-desc">Безпека картки</p>
+                </div>
             </a>
+
             <a asp-controller="Auth" asp-action="Logout" class="menu-btn menu-btn-danger">
-                Exit
+                <div class="menu-btn-icon">
+                    <img src="~/icons/exit.svg" alt="Exit" class="svg-icon" />
+                </div>
+                <div>
+                    <h4 class="menu-btn-title">Завершити</h4>
+                    <p class="menu-btn-desc">Повернути картку</p>
+                </div>
             </a>
         </div>
+
     </div>
 </div>
