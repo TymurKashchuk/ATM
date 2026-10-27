@@ -1,12 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace AtmSimulator.ViewModels
 {
     public class CardViewModel
     {
-        [Required(ErrorMessage = "Введіть нрмер картки")]
+        private string _cardNumber = string.Empty;
+
+        [Required(ErrorMessage = "Введіть номер картки")]
         [StringLength(16, MinimumLength = 16, ErrorMessage = "Номер картки має бути 16 цифр")]
-        public string CardNumber { get; set; } = string.Empty;
+        public string CardNumber
+        {
+            get => _cardNumber;
+            set => _cardNumber = value?.Replace(" ", "").Trim() ?? string.Empty;
+        }
     }
 
     public class PinViewModel {

@@ -1,36 +1,53 @@
-﻿@model AtmSimulator.ViewModels.WithdrawalViewModel
+@model AtmSimulator.ViewModels.WithdrawalViewModel
 
 @{
-    ViewData["Title"] = "Withdrawal Successful";
+    ViewData["Title"] = "Готівку успішно видано";
 }
 
 <div class="atm-screen">
-    <div class="atm-card">
+    <div class="atm-card" style="max-width: 540px;">
         <div class="atm-header">
-            <h1 style="color:#4ade80">Success</h1>
-            <p class="text-muted">Your cash has been dispensed</p>
-        </div>
-
-        <div class="balance-box">
-            <p class="balance-label">New Balance</p>
-            <p class="balance-amount">@Model.CurrentBalance.ToString("N2") ₴</p>
-        </div>
-
-        @if (Model.DispensedCash != null)
-        {
-            <div class="dispensed-cash">
-                <p class="balance-label" style="margin-bottom:0.75rem">Dispensed banknotes</p>
-                @foreach (var item in Model.DispensedCash.OrderByDescending(x => x.Key))
-                {
-                    <div class="banknote-row">
-                        <span>@item.Key ₴</span>
-                        <span>× @item.Value</span>
-                        <span style="color:#4ade80">= @(item.Key * item.Value) ₴</span>
-                    </div>
-                }
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--success-bg); border: 2px solid var(--success-border); color: var(--success); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);">
+                <span class="material-symbols-rounded" style="font-size: 36px; color: var(--success);">check_circle</span>
             </div>
-        }
+            <h1>Готівку видано</h1>
+            <p class="text-muted">Будь ласка, заберіть купюри та картку з лотка термінала</p>
+        </div>
 
-        <a asp-controller="Account" asp-action="Index" class="btn-atm mt-4">← Main Menu</a>
+        <!-- Електронний касовий чек термінала -->
+        <div class="receipt-card">
+            <div style="text-align: center; border-bottom: 2px dashed var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                <p style="font-weight: 800; font-size: 0.95rem; margin: 0; color: var(--text-heading); letter-spacing: 0.05em;">АТМ СИМУЛЯТОР • НАЦІОНАЛЬНИЙ БАНК</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">ТЕРМІНАЛ #0442 • КАСОВИЙ ЧЕК</p>
+            </div>
+
+            @if (Model.DispensedCash != null && Model.DispensedCash.Any())
+            {
+                <div style="margin-bottom: 1.25rem;">
+                    <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.65rem;">Розрахунок виданих банкнот:</span>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        @foreach (var item in Model.DispensedCash.OrderByDescending(x => x.Key))
+                        {
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--surface-subtle); border: 1px solid var(--border-subtle); border-radius: 12px;">
+                                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                                    <span style="font-weight: 800; font-size: 1.1rem; color: var(--text-heading);">@item.Key ₴</span>
+                                    <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">× @item.Value шт.</span>
+                                </div>
+                                <span style="font-weight: 800; color: var(--text-heading); font-size: 1.05rem;">= @(item.Key * item.Value) ₴</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div style="border-top: 2px dashed var(--border-color); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-muted);">Залишок на рахунку:</span>
+                <span style="font-size: 1.35rem; font-weight: 800; color: var(--success);">@Model.CurrentBalance.ToString("N2") ₴</span>
+            </div>
+        </div>
+
+        <a asp-controller="Account" asp-action="Index" class="btn-atm">
+            Повернутися в головне меню
+        </a>
     </div>
 </div>
