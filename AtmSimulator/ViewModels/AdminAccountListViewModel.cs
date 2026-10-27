@@ -1,4 +1,4 @@
-﻿namespace AtmSimulator.ViewModels
+namespace AtmSimulator.ViewModels
 {
     public class AdminAccountListViewModel
     {
@@ -17,12 +17,18 @@
 
     public class CreateAccountViewModel
     {
+        private string _cardNumber = string.Empty;
+
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Введіть ім'я власника")]
         public string OwnerName { get; set; } = string.Empty;
 
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Введіть номер картки")]
         [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 16, ErrorMessage = "Номер картки має бути 16 цифр")]
-        public string CardNumber { get; set; } = string.Empty;
+        public string CardNumber
+        {
+            get => _cardNumber;
+            set => _cardNumber = value?.Replace(" ", "").Trim() ?? string.Empty;
+        }
 
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Введіть PIN")]
         [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 4, ErrorMessage = "PIN має бути 4 цифри")]

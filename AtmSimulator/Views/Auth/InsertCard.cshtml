@@ -5,53 +5,69 @@
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 440px;">
+    <div class="atm-card" style="max-width: 520px;">
         <div class="atm-header">
-            <!-- Візуальний слот для картки -->
-            <div style="width: 64px; height: 10px; background: #0f172a; border: 2px solid var(--border-color); border-radius: 6px; margin: 0 auto 1.25rem auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);"></div>
+            <!-- Графічний слот термінала -->
+            <div style="width: 80px; height: 12px; background: #e2e8f0; border: 2px solid #cbd5e1; border-radius: 9999px; margin: 0 auto 1.5rem auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);"></div>
             
             <h1>Вітаємо в банкоматі</h1>
-            <p class="text-muted">Введіть 16-значний номер вашої картки</p>
+            <p class="text-muted">Вставте картку або введіть її номер нижче</p>
         </div>
-
-        @if (TempData["BlockedMessage"] != null)
-        {
-            <div class="alert alert-danger mb-3">@TempData["BlockedMessage"]</div>
-        }
 
         <form action="/Auth/InsertCard" method="post">
             @Html.AntiForgeryToken()
             <div class="form-group mb-3">
-                <label asp-for="CardNumber" class="form-label">Номер картки</label>
+                <label asp-for="CardNumber" class="form-label">Номер банківської картки</label>
                 <div style="position: relative;">
                     <input asp-for="CardNumber"
                            id="card-number-input"
-                           class="form-control"
+                           class="form-control card-format-input"
                            placeholder="1234 5678 9012 3456"
-                           maxlength="16"
-                           style="letter-spacing: 0.1em; font-family: monospace; font-size: 1.1rem; padding-left: 2.75rem;" />
-                    <div style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); opacity: 0.6; display: flex;">
-                        <img src="~/icons/contactless.svg" alt="Card" class="svg-icon" style="width: 18px; height: 18px;" />
+                           maxlength="19"
+                           inputmode="numeric"
+                           autocomplete="cc-number"
+                           style="letter-spacing: 0.12em; font-family: monospace; font-size: 1.3rem; padding-left: 3.25rem; font-weight: 700;" />
+                    <div style="position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); display: flex; color: var(--primary);">
+                        <span class="material-symbols-rounded" style="font-size: 24px;">credit_card</span>
                     </div>
                 </div>
-                <span asp-validation-for="CardNumber" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <!-- Швидкі демо-картки для тестування -->
-            <div style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border-color); border-radius: 10px; padding: 0.65rem 0.85rem; margin-bottom: 1.25rem;">
-                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Тестові картки:</span>
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <button type="button" class="btn-atm-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; width: auto; font-family: monospace;" onclick="document.getElementById('card-number-input').value='1234567890123456'">1234...3456</button>
-                    <button type="button" class="btn-atm-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; width: auto; font-family: monospace;" onclick="document.getElementById('card-number-input').value='6543210987654321'">6543...4321</button>
+            <!-- Швидкі демо-картки -->
+            <div style="background: var(--surface-subtle); border: 2px dashed var(--border-color); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.75rem;">
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-heading); display: block; margin-bottom: 0.6rem;">Швидкий вибір тестової картки:</span>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
+                    <button type="button" class="btn-atm-outline" style="padding: 0.6rem 0.75rem; font-size: 0.85rem; border-radius: 10px; flex-direction: column; gap: 0.15rem; align-items: flex-start; text-align: left;" onclick="selectDemoCard('1234 5678 9012 3456')">
+                        <strong style="color: var(--text-heading); font-size: 0.85rem;">John Jones</strong>
+                        <span style="font-family: monospace; font-size: 0.8rem; color: var(--primary); font-weight: 600;">1234 5678 9012 3456</span>
+                    </button>
+                    <button type="button" class="btn-atm-outline" style="padding: 0.6rem 0.75rem; font-size: 0.85rem; border-radius: 10px; flex-direction: column; gap: 0.15rem; align-items: flex-start; text-align: left;" onclick="selectDemoCard('6543 2109 8765 4321')">
+                        <strong style="color: var(--text-heading); font-size: 0.85rem;">Will Smith</strong>
+                        <span style="font-family: monospace; font-size: 0.8rem; color: var(--primary); font-weight: 600;">6543 2109 8765 4321</span>
+                    </button>
                 </div>
             </div>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
-
             <button type="submit" class="btn-atm">
-                <span>Продовжити</span>
-                <img src="~/icons/check.svg" alt="Go" class="svg-icon" style="width: 18px; height: 18px;" />
+                Продовжити роботу
             </button>
         </form>
+
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="/Admin/Login" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; opacity: 0.75; transition: all 0.2s ease;">
+                <span class="material-symbols-rounded" style="font-size: 18px;">admin_panel_settings</span>
+                <span>Панель адміністратора</span>
+            </a>
+        </div>
     </div>
 </div>
+
+<script>
+    function selectDemoCard(number) {
+        const input = document.getElementById('card-number-input');
+        if (input) {
+            input.value = number;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+</script>

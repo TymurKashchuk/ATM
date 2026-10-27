@@ -5,26 +5,26 @@
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 400px;">
+    <div class="atm-card" style="max-width: 480px;">
         <div class="atm-header">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
-                <img src="~/icons/pin.svg" alt="PIN" class="svg-icon" style="color: var(--primary);" />
+            <div style="width: 56px; height: 56px; border-radius: 16px; background: var(--primary-light); border: 2px solid #bfdbfe; color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
+                <span class="material-symbols-rounded" style="color: var(--primary); font-size: 30px;">pin</span>
             </div>
             <h1>Введіть PIN-код</h1>
-            <p class="text-muted">Введіть ваш 4-значний секретний код</p>
+            <p class="text-muted">Для доступу до меню та банківських операцій</p>
         </div>
 
         <form id="pin-form" action="/Auth/EnterPin" method="post">
             @Html.AntiForgeryToken()
 
-            <!-- Прихований або синхронізований інпут -->
+            <!-- Прихований інпут для зберігання значення -->
             <input asp-for="Pin"
                    id="pin-input"
                    type="password"
                    maxlength="4"
                    style="position: absolute; opacity: 0; pointer-events: none;" />
 
-            <!-- Візуальні індикатори-точки -->
+            <!-- 4 Великі контрастні індикатори-точки -->
             <div class="pin-dots-container">
                 <div id="dot-0" class="pin-dot"></div>
                 <div id="dot-1" class="pin-dot"></div>
@@ -32,31 +32,62 @@
                 <div id="dot-3" class="pin-dot"></div>
             </div>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
-
-            <!-- Екранний PIN-пад банкомата -->
+            <!-- Реалістичний PIN-пад банкомата -->
             <div class="pin-pad-grid">
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('1')">1</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('2')">2</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('3')">3</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('4')">4</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('5')">5</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('6')">6</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('7')">7</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('8')">8</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('9')">9</button>
-                <button type="button" class="pin-pad-btn action-clear" onclick="backspacePin()">⌫</button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('0')">0</button>
-                <button type="button" class="pin-pad-btn action-clear" onclick="clearPinAll()">C</button>
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('1')">
+                    <span>1</span>
+                </button>
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('2')">
+                    <span>2</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">ABC</span>
+                </button>
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('3')">
+                    <span>3</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">DEF</span>
+                </button>
+
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('4')">
+                    <span>4</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">GHI</span>
+                </button>
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('5')">
+                    <span>5</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">JKL</span>
+                </button>
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('6')">
+                    <span>6</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">MNO</span>
+                </button>
+
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('7')">
+                    <span>7</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">PQRS</span>
+                </button>
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('8')">
+                    <span>8</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">TUV</span>
+                </button>
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('9')">
+                    <span>9</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">WXYZ</span>
+                </button>
+
+                <button type="button" class="pin-pad-btn action-clear" onclick="backspacePin()" title="Стерти символ">
+                    <span class="material-symbols-rounded" style="font-size: 22px;">backspace</span>
+                </button>
+                <button type="button" class="pin-pad-btn" onclick="addPinDigit('0')">
+                    <span>0</span>
+                </button>
+                <button type="button" class="pin-pad-btn action-clear" onclick="clearPinAll()" title="Очистити все">
+                    <span>C</span>
+                </button>
             </div>
 
             <button type="submit" class="btn-atm">
-                <img src="~/icons/check.svg" alt="Confirm" class="svg-icon" style="width: 18px; height: 18px;" />
                 Підтвердити
             </button>
 
             <a asp-action="InsertCard" class="btn-atm-outline mt-2">
-                <img src="~/icons/arrow-left.svg" alt="Cancel" class="svg-icon" style="width: 18px; height: 18px;" />
                 Скасувати
             </a>
         </form>
@@ -83,7 +114,6 @@
                 pinInput.value += digit;
                 updateDots();
                 if (pinInput.value.length === 4) {
-                    // Невелика затримка для плавності перед відправкою
                     setTimeout(() => form.submit(), 250);
                 }
             }
@@ -101,7 +131,6 @@
             updateDots();
         }
 
-        // Дозволяємо також зручно друкувати на фізичній клавіатурі
         document.addEventListener('keydown', function (e) {
             if (e.key >= '0' && e.key <= '9') {
                 addPinDigit(e.key);
