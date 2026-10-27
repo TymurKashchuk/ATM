@@ -1,10 +1,34 @@
+:root {
+    --bg-page: #0f172a;           /* Deep Slate */
+    --bg-terminal: #1e293b;       /* Surface Slate */
+    --bg-surface: #0f172a;        /* Inner container */
+    --bg-surface-hover: #334155;
+    --border-color: #334155;      /* Slate border */
+    --border-light: #475569;
+    --primary: #3b82f6;           /* Solid Royal Blue */
+    --primary-hover: #2563eb;
+    --primary-bg: rgba(59, 130, 246, 0.12);
+    --success: #10b981;           /* Forest Emerald - non-neon */
+    --success-bg: rgba(16, 185, 129, 0.12);
+    --danger: #f43f5e;            /* Muted Rose */
+    --danger-bg: rgba(244, 63, 94, 0.12);
+    --warning: #f59e0b;           /* Amber */
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-subtle: #64748b;
+    --card-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
 body {
-    background-color: #1a1a2e;
+    background-color: var(--bg-page);
+    color: var(--text-main);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 1.5rem;
 }
 
 .atm-screen {
@@ -12,122 +36,240 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 2rem;
 }
 
 .atm-card {
-    background: #16213e;
-    border: 1px solid #0f3460;
-    border-radius: 16px;
-    padding: 2.5rem;
+    background: var(--bg-terminal);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2.25rem;
     width: 100%;
-    max-width: 420px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    max-width: 460px;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .atm-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
 }
 
-    .atm-header h1 {
-        color: #e0e0e0;
-        font-size: 1.8rem;
-        font-weight: 600;
-    }
+.atm-header h1 {
+    color: var(--text-main);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
 
-    .atm-header p {
-        color: #888;
-        margin-top: 0.25rem;
-    }
+.atm-header p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-top: 0.35rem;
+}
 
+/* Форми та інпути */
 .form-label {
-    color: #ccc;
-    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
 }
 
 .form-control {
-    background: #0f3460;
-    border: 1px solid #1a4a7a;
-    color: #e0e0e0;
-    border-radius: 8px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    border-radius: 10px;
     padding: 0.75rem 1rem;
     font-size: 1rem;
     width: 100%;
+    box-sizing: border-box;
+    transition: all 0.15s ease-in-out;
 }
 
-    .form-control:focus {
-        background: #0f3460;
-        border-color: #e94560;
-        color: #e0e0e0;
-        box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
-        outline: none;
-    }
+.form-control:focus {
+    background: var(--bg-surface);
+    border-color: var(--primary);
+    color: var(--text-main);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
 
+/* Кнопки */
 .btn-atm {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     width: 100%;
     padding: 0.85rem;
-    background: #e94560;
-    color: white;
+    background: var(--primary);
+    color: #ffffff;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: background 0.15s ease, transform 0.05s ease;
+    box-sizing: border-box;
 }
 
-    .btn-atm:hover {
-        background: #c73652;
-        color: white;
-    }
+.btn-atm:hover {
+    background: var(--primary-hover);
+    color: #ffffff;
+}
+
+.btn-atm:active {
+    transform: scale(0.99);
+}
 
 .btn-atm-outline {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     width: 100%;
     padding: 0.85rem;
     background: transparent;
-    color: #888;
-    border: 1px solid #333;
-    border-radius: 8px;
-    font-size: 1rem;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
 }
 
-    .btn-atm-outline:hover {
-        border-color: #e94560;
-        color: #e94560;
-    }
+.btn-atm-outline:hover {
+    border-color: var(--border-light);
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.03);
+}
 
+/* Повідомлення про помилки та успіх */
 .alert-danger {
-    background: rgba(233, 69, 96, 0.15);
-    border: 1px solid rgba(233, 69, 96, 0.3);
-    color: #e94560;
-    border-radius: 8px;
+    background: var(--danger-bg);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    color: var(--danger);
+    border-radius: 10px;
     padding: 0.75rem 1rem;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
 }
 
 .text-danger {
-    color: #e94560 !important;
+    color: var(--danger) !important;
     font-size: 0.8rem;
 }
 
 .text-muted {
-    color: white !important;
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
+    color: var(--text-muted) !important;
 }
 
+.alert-success-atm {
+    background: var(--success-bg);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: var(--success);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
+    text-align: center;
+}
 
+/* Візуальна банківська картка */
+.bank-card {
+    background: var(--card-gradient);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.bank-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.bank-card-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.bank-card-owner {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0.2rem 0 0 0;
+}
+
+.bank-card-chip {
+    width: 34px;
+    height: 26px;
+    background: #e2c799;
+    border-radius: 5px;
+    border: 1px solid #c8a870;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    padding: 2px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.bank-card-chip-cell {
+    border: 1px solid #b89758;
+    border-radius: 2px;
+}
+
+.bank-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.bank-card-number {
+    font-family: monospace;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.bank-card-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--success-bg);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--success);
+}
+
+.bank-card-status.blocked {
+    background: var(--danger-bg);
+    border-color: rgba(244, 63, 94, 0.3);
+    color: var(--danger);
+}
+
+/* Баланс */
 .balance-box {
-    background: #0f3460;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.25rem;
     text-align: center;
@@ -135,18 +277,20 @@ body {
 }
 
 .balance-label {
-    color: #888;
+    color: var(--text-muted);
     font-size: 0.85rem;
-    margin-bottom: 0.25rem;
+    margin: 0 0 0.35rem 0;
 }
 
 .balance-amount {
-    color: #4ade80;
+    color: var(--success);
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
+    letter-spacing: -0.02em;
 }
 
+/* Головне меню */
 .menu-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -154,191 +298,204 @@ body {
 }
 
 .menu-btn {
-    display: block;
-    padding: 1rem;
-    background: #0f3460;
-    border: 1px solid #1a4a7a;
-    border-radius: 10px;
-    color: #e0e0e0;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.15rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-main);
     text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
 }
 
-    .menu-btn:hover {
-        background: #1a4a7a;
-        border-color: #e94560;
-        color: #fff;
-    }
+.menu-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--primary);
+    color: var(--text-main);
+}
+
+.menu-btn-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+}
+
+.menu-btn:hover .menu-btn-icon {
+    background: var(--primary-bg);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: var(--primary);
+}
+
+.menu-btn-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.menu-btn-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0.15rem 0 0 0;
+}
 
 .menu-btn-danger:hover {
-    background: rgba(233, 69, 96, 0.15);
-    border-color: #e94560;
-    color: #e94560;
+    border-color: var(--danger);
 }
 
+.menu-btn-danger:hover .menu-btn-icon {
+    background: var(--danger-bg);
+    border-color: rgba(244, 63, 94, 0.3);
+    color: var(--danger);
+}
 
+/* Швидкі суми */
 .quick-amounts {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
     margin-top: 1rem;
 }
 
 .quick-btn {
-    padding: 0.6rem;
-    background: #0f3460;
-    border: 1px solid #1a4a7a;
-    border-radius: 8px;
-    color: #e0e0e0;
+    padding: 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-main);
     cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
+    transition: all 0.15s ease;
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
-    .quick-btn:hover {
-        border-color: #e94560;
-        color: #e94560;
-    }
-
-.dispensed-cash {
-    background: #0f3460;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1rem;
+.quick-btn:hover {
+    border-color: var(--primary);
+    background: var(--primary-bg);
+    color: var(--primary);
 }
 
-.banknote-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.4rem 0;
-    border-bottom: 1px solid #1a4a7a;
-    color: #e0e0e0;
-    font-size: 0.9rem;
-}
-
-    .banknote-row:last-child {
-        border-bottom: none;
-    }
-
-
-.alert-success-atm {
-    background: rgba(74, 222, 128, 0.1);
-    border: 1px solid rgba(74, 222, 128, 0.25);
-    color: #4ade80;
-    border-radius: 8px;
-    padding: 0.65rem 1rem;
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-    text-align: center;
-    letter-spacing: 0.01em;
-}
-
-
+/* Історія транзакцій */
 .transaction-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
 }
 
 .transaction-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    background: #0f3460;
-    border-radius: 10px;
+    gap: 0.85rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
     padding: 0.85rem 1rem;
 }
 
 .transaction-icon {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
     flex-shrink: 0;
 }
 
-    .transaction-icon.withdrawal {
-        background: rgba(233, 69, 96, 0.2);
-        color: #e94560;
-    }
+.transaction-icon.withdrawal {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border: 1px solid rgba(244, 63, 94, 0.2);
+}
 
-    .transaction-icon.deposit {
-        background: rgba(74, 222, 128, 0.2);
-        color: #4ade80;
-    }
+.transaction-icon.deposit {
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
 
-    .transaction-icon.transfer {
-        background: rgba(96, 165, 250, 0.2);
-        color: #60a5fa;
-    }
+.transaction-icon.transfer {
+    background: var(--primary-bg);
+    color: var(--primary);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
 
 .transaction-info {
     flex: 1;
 }
 
 .transaction-type {
-    color: #e0e0e0;
+    color: var(--text-main);
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
     margin: 0;
 }
 
 .transaction-date {
-    color: #888;
+    color: var(--text-muted);
     font-size: 0.75rem;
-    margin: 0;
+    margin: 0.15rem 0 0 0;
 }
 
 .transaction-amount {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.95rem;
 }
 
-    .transaction-amount.positive {
-        color: #4ade80;
-    }
-
-    .transaction-amount.negative {
-        color: #e94560;
-    }
-
-.empty-state {
-    text-align: center;
-    color: #888;
-    padding: 2rem 0;
+.transaction-amount.positive {
+    color: var(--success);
 }
 
+.transaction-amount.negative {
+    color: var(--text-main);
+}
+
+/* Пагінація */
 .pagination {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin-top: 1rem;
+    margin-top: 1.25rem;
 }
 
 .page-btn {
-    padding: 0.5rem 1rem;
-    background: #0f3460;
-    border: 1px solid #1a4a7a;
+    padding: 0.5rem 0.85rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    color: #e0e0e0;
+    color: var(--text-main);
     text-decoration: none;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-    .page-btn:hover {
-        border-color: #e94560;
-        color: #e94560;
-    }
+.page-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
 
 .page-info {
-    color: #888;
-    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* SVG helpers */
+.svg-icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
 }
