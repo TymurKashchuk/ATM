@@ -499,3 +499,72 @@ body {
     stroke: currentColor;
     fill: none;
 }
+
+
+/* PIN-Pad */
+.pin-dots-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 1.25rem 0 1.5rem 0;
+}
+
+.pin-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: var(--bg-surface);
+    transition: all 0.15s ease;
+}
+
+.pin-dot.filled {
+    background: var(--primary);
+    border-color: var(--primary);
+    transform: scale(1.15);
+}
+
+.pin-pad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.pin-pad-btn {
+    height: 48px;
+    background: var(--bg-terminal);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-main);
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pin-pad-btn:hover {
+    background: var(--border-color);
+    color: #ffffff;
+}
+
+.pin-pad-btn:active {
+    transform: scale(0.95);
+}
+
+.pin-pad-btn.action-clear {
+    color: var(--danger);
+    font-size: 0.85rem;
+}
+
+.pin-pad-btn.action-clear:hover {
+    background: var(--danger-bg);
+    border-color: rgba(244, 63, 94, 0.4);
+}
