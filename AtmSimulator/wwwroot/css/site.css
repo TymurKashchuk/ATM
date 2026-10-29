@@ -1568,9 +1568,33 @@ body {
     color: var(--muted);
 }
 
-.text-right {
-    text-align: right;
+.pin-change-card {
+    max-width: 480px;
 }
+
+.hidden-pin-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Standalone Utility Classes (eliminating Bootstrap CDN) */
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.d-block { display: block !important; }
+.d-inline { display: inline !important; }
+.d-flex { display: flex !important; }
+.w-100 { width: 100% !important; }
+.justify-content-center { justify-content: center !important; }
 
 /* Адаптивність (Mobile / Desktop) */
 @media (max-width: 900px) {
