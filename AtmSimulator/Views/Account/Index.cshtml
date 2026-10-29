@@ -7,9 +7,9 @@
 
 <div class="atm-screen">
     <div class="menu-dashboard">
-        <!-- Ліва колонка: картка та баланс -->
+        <!-- Ліва колонка: картка, баланс, останні операції (2-menu.png) -->
         <div class="menu-left-col">
-            <!-- Плашка банківської картки (за макетом 2-menu.png) -->
+            <!-- Плашка банківської картки -->
             <div class="bank-card">
                 <div class="bank-card-header">
                     <div class="bank-card-chip">
@@ -36,19 +36,39 @@
 
                 <div class="bank-card-footer-info">
                     <p class="bank-card-holder-name">@Model.OwnerName</p>
+                    <span class="bank-card-expiry font-mono">до 10/29</span>
                 </div>
             </div>
 
-            <!-- Блок балансу -->
+            <!-- Блок доступного балансу -->
             <div class="balance-box">
                 <p class="balance-box-label">Доступний баланс</p>
                 <p class="balance-box-val font-mono">
                     @Model.Balance.ToString("N2") <span class="currency-symbol">₴</span>
                 </p>
             </div>
+
+            <!-- Блок "Останні операції" (як у макеті 2-menu.png) -->
+            <div class="recent-ops-card">
+                <h4 class="recent-ops-title">Останні операції</h4>
+                <div class="recent-ops-list">
+                    <div class="recent-op-item">
+                        <span class="recent-op-desc">Зняття · 2×500, 1×200</span>
+                        <span class="recent-op-amount neg font-mono">−1 200 ₴</span>
+                    </div>
+                    <div class="recent-op-item">
+                        <span class="recent-op-desc">Переказ з картки 4321</span>
+                        <span class="recent-op-amount pos font-mono">+500 ₴</span>
+                    </div>
+                    <div class="recent-op-item">
+                        <span class="recent-op-desc">Поповнення</span>
+                        <span class="recent-op-amount pos font-mono">+2 000 ₴</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Права колонка: сітка дій 3x2 (за макетом 2-menu.png) -->
+        <!-- Права колонка: сітка дій 3x2 (2-menu.png) -->
         <div class="menu-right-col">
             <div class="menu-grid-3x2 menu-grid">
                 <a asp-controller="Transaction" asp-action="Withdraw" class="menu-card-btn menu-btn">

@@ -29,7 +29,6 @@
 
     var controllerName = ViewContext.RouteData.Values["controller"]?.ToString();
     var isAdmin = string.Equals(controllerName, "Admin", StringComparison.OrdinalIgnoreCase);
-    var isAdminLoggedIn = Context.Session.GetString("IsAdmin") == "true";
 
     var cardNumber = Context.Session.GetString("CardNumber");
     var authCard = Context.Session.GetString("AuthenticatedCard");
@@ -73,8 +72,10 @@
             <div class="atm-topbar-center">
                 @if (isAdmin)
                 {
-                    <div class="admin-state-indicator">
-                        <span class="step-pill active">Адмін</span>
+                    <div class="step-indicator" role="navigation" aria-label="Панель адміністратора">
+                        <span class="step-pill active">Огляд</span>
+                        <a href="/Admin/Index" class="step-pill">Акаунти</a>
+                        <span class="step-pill">Журнал</span>
                     </div>
                 }
                 else
@@ -88,13 +89,13 @@
             </div>
 
             <div class="atm-topbar-right">
-                @if (isAdmin && isAdminLoggedIn)
+                @if (isAdmin)
                 {
-                    <a href="/Admin/AdminLogout" class="topbar-action-link">Вийти</a>
+                    <a href="/Admin/AdminLogout" class="topbar-logout-link">Вийти</a>
                 }
                 else
                 {
-                    <span class="topbar-terminal-meta">Термінал #0442</span>
+                    <span class="topbar-terminal-meta">Термінал #0442 &nbsp;·&nbsp; сесія 09:42</span>
                 }
             </div>
         </header>

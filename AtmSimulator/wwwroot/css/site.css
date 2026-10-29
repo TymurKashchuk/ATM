@@ -141,6 +141,18 @@ body {
     color: var(--muted);
 }
 
+.topbar-logout-link {
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.topbar-logout-link:hover {
+    color: var(--text);
+}
+
 .topbar-action-link {
     display: inline-flex;
     align-items: center;
@@ -213,6 +225,16 @@ body {
 /* Типографіка та моноширинний текст */
 .font-mono {
     font-family: var(--font-mono) !important;
+}
+
+/* Приховування спінера для number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
 }
 
 /* Форми та поля вводу */
@@ -401,11 +423,12 @@ body {
 
 .bank-card-number-mid {
     font-family: var(--font-mono);
-    font-size: 1.35rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     color: var(--text);
     margin: 0 0 2rem 0;
+    white-space: nowrap;
 }
 
 .bank-card-footer-info {
@@ -419,6 +442,12 @@ body {
     font-weight: 600;
     color: var(--text);
     margin: 0;
+}
+
+.bank-card-expiry {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
 }
 
 /* Блок балансу */
@@ -454,6 +483,55 @@ body {
 .balance-amount .currency {
     color: var(--accent);
     margin-left: 0.35rem;
+}
+
+/* Блок "Останні операції" (як у макеті 2-menu.png) */
+.recent-ops-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    padding: 1.5rem 1.75rem;
+}
+
+.recent-ops-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 1.25rem 0;
+}
+
+.recent-ops-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.recent-op-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.recent-op-desc {
+    font-size: 0.925rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.recent-op-amount {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.recent-op-amount.neg {
+    color: var(--text);
+}
+
+.recent-op-amount.pos {
+    color: var(--accent);
 }
 
 /* Меню термінала (2-menu.png) */
@@ -965,6 +1043,229 @@ body {
 }
 
 /* Operation View Styles (3-withdraw.png style) */
+.withdraw-dashboard {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 1.75rem;
+    width: 100%;
+    max-width: 1100px;
+    align-items: start;
+}
+
+.withdraw-form-card {
+    max-width: 100%;
+    padding: 2.25rem;
+}
+
+.withdraw-header {
+    margin-bottom: 1.25rem;
+}
+
+.withdraw-subtext {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.withdraw-amount-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.withdraw-amount-field {
+    font-family: var(--font-mono) !important;
+    font-size: 3.25rem !important;
+    font-weight: 700 !important;
+    color: var(--text) !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    max-width: 180px !important;
+    outline: none !important;
+    box-shadow: none !important;
+    line-height: 1 !important;
+    height: auto !important;
+    min-height: unset !important;
+}
+
+.withdraw-amount-currency {
+    font-family: var(--font-mono);
+    font-size: 3.25rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.withdraw-presets-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.withdraw-preset-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+}
+
+.withdraw-preset-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.dispense-strategy-wrap {
+    margin-bottom: 2rem;
+}
+
+.dispense-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.85rem;
+}
+
+.dispense-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dispense-option-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.15rem 1.25rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.dispense-option-card.active {
+    border: 1.5px solid var(--accent);
+    background: rgba(74, 222, 158, 0.03);
+}
+
+.dispense-opt-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.dispense-opt-desc {
+    font-size: 0.825rem;
+    color: var(--muted);
+}
+
+.withdraw-submit-btn {
+    margin-top: 0.5rem;
+}
+
+/* Права колонка розрахунку видачі */
+.withdraw-calc-card {
+    max-width: 100%;
+    padding: 2.25rem;
+}
+
+.calc-card-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 2rem 0;
+}
+
+.calc-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    min-height: 120px;
+}
+
+.calc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.calc-denom-col {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.calc-swatch {
+    width: 54px;
+    height: 32px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.calc-swatch.blue { background: #8AB4F8; }
+.calc-swatch.peach { background: #F87171; }
+.calc-swatch.purple { background: #C084FC; }
+.calc-swatch.amber { background: #FBBF24; }
+.calc-swatch.coral { background: #FB7185; }
+
+.calc-denom-text {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.calc-row-total {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.calc-footer-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2.5rem 0 1.5rem 0;
+}
+
+.calc-remaining-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.calc-remaining-label {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.calc-remaining-val {
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.calc-status-note {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0;
+}
+
 .operation-card {
     max-width: 580px;
 }
@@ -1360,6 +1661,213 @@ body {
 }
 
 /* Admin Panel Styles (4-admin.png) */
+.admin-dashboard-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1160px;
+}
+
+/* 3 KPI картки (4-admin.png) */
+.admin-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.admin-kpi-card {
+    max-width: 100%;
+    padding: 1.75rem 2rem;
+}
+
+.admin-kpi-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.admin-kpi-value {
+    font-family: var(--font-mono);
+    font-size: 2.35rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+    margin: 0;
+}
+
+.admin-kpi-value.warning {
+    color: var(--warning);
+}
+
+/* Середній ряд: Касети та Observer (4-admin.png) */
+.admin-middle-row {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 1.5rem;
+}
+
+.admin-cassettes-card,
+.admin-observer-card {
+    max-width: 100%;
+    padding: 1.75rem 2rem;
+}
+
+.admin-panel-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 1.5rem 0;
+}
+
+.admin-cassettes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.cassette-item {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.cassette-denom {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    width: 60px;
+    color: var(--text);
+    flex-shrink: 0;
+}
+
+.cassette-bar-track {
+    flex: 1;
+    height: 8px;
+    background: #0E1116;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.cassette-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.3s ease;
+}
+
+.cassette-bar-fill.mint {
+    background: var(--accent);
+}
+
+.cassette-bar-fill.amber {
+    background: var(--warning);
+}
+
+.cassette-bar-fill.coral {
+    background: var(--danger);
+}
+
+.cassette-qty {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    width: 35px;
+    text-align: right;
+    color: var(--text);
+    flex-shrink: 0;
+}
+
+/* Observer Events (4-admin.png) */
+.observer-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.observer-event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.observer-event-desc {
+    font-size: 0.925rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.observer-event-val {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.observer-event-val.neg {
+    color: var(--text);
+}
+
+.observer-event-val.pos {
+    color: var(--accent);
+}
+
+.observer-event-badge {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--danger);
+    padding: 0 0.25rem;
+}
+
+/* Нижня таблиця акаунтів (4-admin.png) */
+.admin-table-card {
+    max-width: 100%;
+    padding: 1.75rem 2rem;
+}
+
+.admin-table-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.admin-search-wrap {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 420px;
+    flex: 1;
+}
+
+.admin-search-input {
+    min-height: 42px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.admin-search-btn,
+.admin-search-reset-btn {
+    min-height: 42px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+.admin-add-btn {
+    width: auto;
+    min-height: 42px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.admin-table-responsive {
+    overflow-x: auto;
+}
+
 .admin-login-card,
 .admin-form-card {
     max-width: 480px;
@@ -1531,19 +2039,27 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.45rem 1rem;
+    padding: 0.5rem 1.25rem;
     border-radius: 10px;
-    font-size: 0.825rem;
+    font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
-    border: 1px solid transparent;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn-admin-action:hover {
+    background: #232c3a;
+    border-color: var(--border-strong);
+    color: var(--text);
 }
 
 .btn-admin-action.block {
-    background: var(--surface);
-    border-color: var(--border);
-    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
 }
 
 .btn-admin-action.block:hover {
@@ -1610,6 +2126,14 @@ body {
     .auth-card {
         padding: 2.5rem 2rem;
     }
+
+    .withdraw-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-middle-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1622,11 +2146,33 @@ body {
     .menu-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .admin-kpi-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 600px) {
-    .atm-card {
-        padding: 1.5rem 1rem;
+    .atm-main-content {
+        padding: 1rem 0.75rem 2.5rem 0.75rem;
+    }
+
+    .atm-card,
+    .bank-card,
+    .balance-box,
+    .recent-ops-card,
+    .withdraw-form-card,
+    .withdraw-calc-card,
+    .admin-kpi-card,
+    .admin-cassettes-card,
+    .admin-observer-card,
+    .admin-table-card {
+        padding: 1.35rem 1rem !important;
+    }
+
+    .bank-card-number-mid {
+        font-size: 1.05rem;
+        letter-spacing: 0.04em;
     }
 
     .step-indicator {
@@ -1651,5 +2197,23 @@ body {
 
     .quick-amounts {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .withdraw-presets-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-search-wrap {
+        max-width: 100%;
+        flex-direction: column;
+    }
+
+    .admin-table-header-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-add-btn {
+        width: 100%;
     }
 }
