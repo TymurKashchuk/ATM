@@ -353,44 +353,28 @@ body {
     text-align: center;
 }
 
-/* Банківська картка клієнта */
+/* Банківська картка клієнта (2-menu.png) */
 .bank-card {
-    background: var(--surface-2);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-panel);
-    padding: 1.5rem 1.75rem;
+    padding: 1.75rem 1.75rem 1.5rem 1.75rem;
     color: var(--text);
     position: relative;
     overflow: hidden;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .bank-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.75rem;
-}
-
-.bank-card-title {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin: 0 0 0.25rem 0;
-    font-weight: 600;
-}
-
-.bank-card-owner {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text);
-    margin: 0;
+    align-items: center;
+    margin-bottom: 2rem;
 }
 
 .bank-card-chip {
-    width: 38px;
-    height: 28px;
+    width: 44px;
+    height: 32px;
     background: #d4a342;
     border-radius: 6px;
     border: 1px solid #b88628;
@@ -405,132 +389,161 @@ body {
     border-radius: 2px;
 }
 
-.bank-card-footer {
+.bank-card-status-pill {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.bank-card-status-pill.active {
+    color: var(--accent);
+}
+
+.bank-card-number-mid {
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    margin: 0 0 2rem 0;
+}
+
+.bank-card-footer-info {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
 }
 
-.bank-card-number {
-    font-family: var(--font-mono);
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
+.bank-card-holder-name {
+    font-size: 1.05rem;
+    font-weight: 600;
     color: var(--text);
     margin: 0;
 }
 
-.bank-card-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 0.75rem;
-    border-radius: var(--radius-pill);
-    font-size: 0.75rem;
-    font-weight: 700;
-    background: var(--success-bg);
-    border: 1px solid var(--success-border);
-    color: var(--accent);
-}
-
-.bank-card-status.blocked {
-    background: var(--danger-bg);
-    border-color: var(--danger-border);
-    color: var(--danger);
-}
-
 /* Блок балансу */
 .balance-box {
-    background: var(--surface-2);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-panel);
-    padding: 1.5rem;
+    padding: 1.75rem;
     text-align: left;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
+.balance-box-label,
 .balance-label {
     color: var(--muted);
     font-size: 0.85rem;
-    font-weight: 500;
-    margin: 0 0 0.35rem 0;
+    font-weight: 400;
+    margin: 0 0 0.5rem 0;
 }
 
+.balance-box-val,
 .balance-amount {
     color: var(--text);
     font-family: var(--font-mono);
-    font-size: 2.25rem;
+    font-size: 2.4rem;
     font-weight: 700;
     margin: 0;
     letter-spacing: -0.02em;
     line-height: 1.1;
 }
 
+.currency-symbol,
 .balance-amount .currency {
     color: var(--accent);
     margin-left: 0.35rem;
 }
 
-/* Меню термінала (3x2 сітка) */
+/* Меню термінала (2-menu.png) */
+.menu-dashboard {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1100px;
+    align-items: start;
+}
+
+.menu-left-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-right-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-grid-3x2,
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
 }
 
+.menu-card-btn,
 .menu-btn {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 1.25rem;
-    background: var(--surface-2);
+    padding: 1.5rem 1.5rem;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-panel);
     color: var(--text);
     text-decoration: none;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+    min-height: 130px;
 }
 
+.menu-card-btn:hover,
 .menu-btn:hover {
-    background: #212b39;
+    background: var(--surface-2);
     border-color: var(--border-strong);
     color: var(--text);
+    transform: translateY(-2px);
 }
 
+.menu-card-icon,
 .menu-btn-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: rgba(74, 222, 158, 0.1);
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex-shrink: 0;
     color: var(--accent);
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    background: transparent;
+    border: none;
 }
 
+.menu-card-icon .material-symbols-rounded,
 .menu-btn-icon .material-symbols-rounded {
-    font-size: 24px;
+    font-size: 30px;
     color: var(--accent);
 }
 
+.menu-card-title,
 .menu-btn-title {
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     margin: 0;
     color: var(--text);
 }
 
+.menu-card-desc,
 .menu-btn-desc {
-    font-size: 0.8rem;
+    font-size: 0.825rem;
     color: var(--muted);
-    margin: 0.25rem 0 0 0;
+    margin: 0.35rem 0 0 0;
     font-weight: 400;
 }
 
+.menu-btn-danger .menu-card-icon,
 .menu-btn-danger .menu-btn-icon {
-    background: rgba(74, 222, 158, 0.1);
     color: var(--accent);
 }
 
@@ -1122,6 +1135,10 @@ body {
         gap: 0.75rem;
     }
     
+    .menu-dashboard {
+        grid-template-columns: 1fr;
+    }
+
     .menu-grid {
         grid-template-columns: repeat(2, 1fr);
     }
