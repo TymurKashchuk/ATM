@@ -1359,6 +1359,219 @@ body {
     color: var(--accent);
 }
 
+/* Admin Panel Styles (4-admin.png) */
+.admin-login-card,
+.admin-form-card {
+    max-width: 480px;
+}
+
+.admin-dashboard-card {
+    max-width: 960px;
+    padding: 2.5rem;
+}
+
+.admin-icon-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(74, 222, 158, 0.1);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem auto;
+}
+
+.admin-icon-badge .material-symbols-rounded {
+    font-size: 28px;
+    color: var(--accent);
+}
+
+.admin-password-input {
+    letter-spacing: 0.25em;
+    font-size: 1.25rem;
+}
+
+.admin-dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.admin-dashboard-title-wrap h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text);
+}
+
+.admin-dashboard-subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0.35rem 0 0 0;
+}
+
+.admin-new-account-btn {
+    width: auto;
+    padding: 0.75rem 1.35rem;
+    white-space: nowrap;
+}
+
+.admin-search-bar {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+}
+
+.admin-search-input-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.admin-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.admin-search-input {
+    padding-left: 2.75rem;
+}
+
+.admin-search-btn,
+.admin-search-reset-btn {
+    width: auto;
+    padding: 0.75rem 1.25rem;
+    white-space: nowrap;
+}
+
+.admin-table-container {
+    overflow-x: auto;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+}
+
+.admin-accounts-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-accounts-table thead th {
+    padding: 1rem 1.25rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.admin-accounts-table tbody td {
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+.admin-accounts-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-accounts-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.account-client-name strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.account-card-number {
+    color: var(--muted);
+    letter-spacing: 0.08em;
+}
+
+.account-balance-cell {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.admin-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.admin-status-badge.active {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--accent);
+}
+
+.admin-status-badge.blocked {
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    color: var(--danger);
+}
+
+.btn-admin-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1rem;
+    border-radius: 10px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+}
+
+.btn-admin-action.block {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--muted);
+}
+
+.btn-admin-action.block:hover {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger);
+}
+
+.btn-admin-action.unblock {
+    background: var(--success-bg);
+    border-color: var(--success-border);
+    color: var(--accent);
+}
+
+.btn-admin-action.unblock:hover {
+    background: rgba(74, 222, 158, 0.2);
+}
+
+.admin-empty-table-cell {
+    text-align: center;
+    padding: 2.5rem !important;
+    color: var(--muted);
+}
+
+.text-right {
+    text-align: right;
+}
+
 /* Адаптивність (Mobile / Desktop) */
 @media (max-width: 900px) {
     .atm-topbar {

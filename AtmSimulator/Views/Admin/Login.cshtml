@@ -1,24 +1,35 @@
 @{
-    ViewData["Title"] = "Admin Login";
+    ViewData["Title"] = "Вхід адміністратора";
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 440px;">
+    <div class="atm-card admin-login-card">
         <div class="atm-header">
-            <div style="width: 52px; height: 52px; border-radius: 14px; background: var(--primary-light); border: 2px solid #bfdbfe; color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
-                <span class="material-symbols-rounded" style="color: var(--primary); font-size: 28px;">admin_panel_settings</span>
+            <div class="admin-icon-badge">
+                <span class="material-symbols-rounded">admin_panel_settings</span>
             </div>
             <h1>Адміністратор</h1>
-            <p class="text-muted">Введіть пароль для доступу до панелі</p>
+            <p>Введіть пароль для доступу до панелі керування</p>
         </div>
 
         <form method="post">
+            @Html.AntiForgeryToken()
+
             <div class="form-group mb-4">
-                <label class="form-label">Пароль доступу</label>
-                <input type="password" name="password" class="form-control text-center" placeholder="••••••••" style="font-size: 1.25rem;" />
+                <label class="form-label text-center">Пароль доступу</label>
+                <input type="password"
+                       name="password"
+                       class="form-control text-center admin-password-input font-mono"
+                       placeholder="••••••••"
+                       autofocus />
             </div>
-            <button type="submit" class="btn-atm">Увійти</button>
-            <a href="/Auth/InsertCard" class="btn-atm-outline mt-2">Повернутися до банкомата</a>
+
+            <button type="submit" class="btn-atm">
+                Увійти
+            </button>
+            <a href="/Auth/InsertCard" class="btn-atm-outline mt-2">
+                Повернутися до банкомата
+            </a>
         </form>
     </div>
 </div>
