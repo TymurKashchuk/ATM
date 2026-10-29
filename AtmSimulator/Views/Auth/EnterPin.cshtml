@@ -2,95 +2,93 @@
 
 @{
     ViewData["Title"] = "Введення PIN";
+    var cardNumber = Context.Session.GetString("CardNumber") ?? "";
+    string formattedCard = cardNumber;
+    if (cardNumber.Length == 16)
+    {
+        formattedCard = $"{cardNumber[..4]} {cardNumber[4..8]} {cardNumber[8..12]} {cardNumber[12..]}";
+    }
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 480px;">
-        <div class="atm-header">
-            <div style="width: 56px; height: 56px; border-radius: 16px; background: var(--primary-light); border: 2px solid #bfdbfe; color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
-                <span class="material-symbols-rounded" style="color: var(--primary); font-size: 30px;">pin</span>
+    <div class="atm-card auth-card">
+        <div class="auth-layout">
+            <!-- Крок 1: Картка вже введена -->
+            <div class="auth-col">
+                <span class="auth-step-tag">Крок 1 · картка</span>
+                <h1 class="auth-heading">Картку вставлено</h1>
+
+                <div class="card-slot-wrap">
+                    <div class="card-slot-glow"></div>
+                </div>
+
+                <div class="auth-subtext">Номер активної картки</div>
+                <div class="card-inserted-box font-mono">
+                    @formattedCard
+                </div>
+
+                <div class="mt-4">
+                    <a asp-action="InsertCard" class="btn-atm-outline">
+                        Змінити картку
+                    </a>
+                </div>
+
+                <div class="admin-entry-link-wrap">
+                    <a href="/Admin/Login" class="admin-login-link">
+                        <span class="material-symbols-rounded">admin_panel_settings</span>
+                        <span>Панель адміністратора</span>
+                    </a>
+                </div>
             </div>
-            <h1>Введіть PIN-код</h1>
-            <p class="text-muted">Для доступу до меню та банківських операцій</p>
+
+            <!-- Крок 2: Активне введення PIN-коду -->
+            <div class="auth-col auth-col-pin">
+                <span class="auth-step-tag">Крок 2 · PIN-код</span>
+
+                <form id="pin-form" action="/Auth/EnterPin" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Прихований інпут для PIN-значення -->
+                    <input asp-for="Pin"
+                           id="pin-input"
+                           type="password"
+                           maxlength="4"
+                           style="position: absolute; opacity: 0; pointer-events: none;" />
+
+                    <!-- 4 Індикатори-точки -->
+                    <div class="pin-dots-container">
+                        <div id="dot-0" class="pin-dot"></div>
+                        <div id="dot-1" class="pin-dot"></div>
+                        <div id="dot-2" class="pin-dot"></div>
+                        <div id="dot-3" class="pin-dot"></div>
+                    </div>
+
+                    <!-- 3x4 PIN-пад -->
+                    <div class="pin-pad-grid">
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('1')"><span>1</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('2')"><span>2</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('3')"><span>3</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('4')"><span>4</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('5')"><span>5</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('6')"><span>6</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('7')"><span>7</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('8')"><span>8</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('9')"><span>9</span></button>
+                        <button type="button" class="pin-pad-btn action-clear" onclick="backspacePin()" title="Стерти символ"><span>⌫</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('0')"><span>0</span></button>
+                        <button type="button" class="pin-pad-btn action-clear" onclick="clearPinAll()" title="Очистити все"><span>C</span></button>
+                    </div>
+
+                    <button type="submit" class="btn-atm">
+                        Підтвердити PIN
+                    </button>
+                </form>
+
+                <span class="pin-attempts-info">
+                    Залишилось спроб: 3 · після цього картку буде заблоковано
+                </span>
+            </div>
         </div>
-
-        <form id="pin-form" action="/Auth/EnterPin" method="post">
-            @Html.AntiForgeryToken()
-
-            <!-- Прихований інпут для зберігання значення -->
-            <input asp-for="Pin"
-                   id="pin-input"
-                   type="password"
-                   maxlength="4"
-                   style="position: absolute; opacity: 0; pointer-events: none;" />
-
-            <!-- 4 Великі контрастні індикатори-точки -->
-            <div class="pin-dots-container">
-                <div id="dot-0" class="pin-dot"></div>
-                <div id="dot-1" class="pin-dot"></div>
-                <div id="dot-2" class="pin-dot"></div>
-                <div id="dot-3" class="pin-dot"></div>
-            </div>
-
-            <!-- Реалістичний PIN-пад банкомата -->
-            <div class="pin-pad-grid">
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('1')">
-                    <span>1</span>
-                </button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('2')">
-                    <span>2</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">ABC</span>
-                </button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('3')">
-                    <span>3</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">DEF</span>
-                </button>
-
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('4')">
-                    <span>4</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">GHI</span>
-                </button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('5')">
-                    <span>5</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">JKL</span>
-                </button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('6')">
-                    <span>6</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">MNO</span>
-                </button>
-
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('7')">
-                    <span>7</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">PQRS</span>
-                </button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('8')">
-                    <span>8</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">TUV</span>
-                </button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('9')">
-                    <span>9</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: -3px;">WXYZ</span>
-                </button>
-
-                <button type="button" class="pin-pad-btn action-clear" onclick="backspacePin()" title="Стерти символ">
-                    <span class="material-symbols-rounded" style="font-size: 22px;">backspace</span>
-                </button>
-                <button type="button" class="pin-pad-btn" onclick="addPinDigit('0')">
-                    <span>0</span>
-                </button>
-                <button type="button" class="pin-pad-btn action-clear" onclick="clearPinAll()" title="Очистити все">
-                    <span>C</span>
-                </button>
-            </div>
-
-            <button type="submit" class="btn-atm">
-                Підтвердити
-            </button>
-
-            <a asp-action="InsertCard" class="btn-atm-outline mt-2">
-                Скасувати
-            </a>
-        </form>
     </div>
 </div>
 

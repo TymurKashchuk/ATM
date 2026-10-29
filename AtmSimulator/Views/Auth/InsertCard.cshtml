@@ -5,59 +5,84 @@
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 520px;">
-        <div class="atm-header">
-            <!-- Графічний слот термінала -->
-            <div style="width: 80px; height: 12px; background: #e2e8f0; border: 2px solid #cbd5e1; border-radius: 9999px; margin: 0 auto 1.5rem auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);"></div>
-            
-            <h1>Вітаємо в банкоматі</h1>
-            <p class="text-muted">Вставте картку або введіть її номер нижче</p>
-        </div>
+    <div class="atm-card auth-card">
+        <div class="auth-layout">
+            <!-- Крок 1: Введення картки -->
+            <div class="auth-col">
+                <span class="auth-step-tag">Крок 1 · картка</span>
+                <h1 class="auth-heading">Вставте картку</h1>
 
-        <form action="/Auth/InsertCard" method="post">
-            @Html.AntiForgeryToken()
-            <div class="form-group mb-3">
-                <label asp-for="CardNumber" class="form-label">Номер банківської картки</label>
-                <div style="position: relative;">
-                    <input asp-for="CardNumber"
-                           id="card-number-input"
-                           class="form-control card-format-input"
-                           placeholder="1234 5678 9012 3456"
-                           maxlength="19"
-                           inputmode="numeric"
-                           autocomplete="cc-number"
-                           style="letter-spacing: 0.12em; font-family: monospace; font-size: 1.3rem; padding-left: 3.25rem; font-weight: 700;" />
-                    <div style="position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); display: flex; color: var(--primary);">
-                        <span class="material-symbols-rounded" style="font-size: 24px;">credit_card</span>
+                <div class="card-slot-wrap">
+                    <div class="card-slot-glow"></div>
+                </div>
+
+                <form action="/Auth/InsertCard" method="post" id="card-form">
+                    @Html.AntiForgeryToken()
+
+                    <label asp-for="CardNumber" class="auth-subtext">Або введіть номер вручну</label>
+                    <div class="form-group mb-3">
+                        <input asp-for="CardNumber"
+                               id="card-number-input"
+                               class="form-control card-input-large card-format-input"
+                               placeholder="1234 5678 9012 3456"
+                               maxlength="19"
+                               inputmode="numeric"
+                               autocomplete="cc-number"
+                               autofocus />
                     </div>
+
+                    <div class="demo-cards-row">
+                        <button type="button" class="demo-card-pill" onclick="selectDemoCard('1234 5678 9012 3456')">
+                            John Jones · 3456
+                        </button>
+                        <button type="button" class="demo-card-pill" onclick="selectDemoCard('6543 2109 8765 4321')">
+                            Will Smith · 4321
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn-atm">
+                        Продовжити роботу
+                    </button>
+                </form>
+
+                <div class="admin-entry-link-wrap">
+                    <a href="/Admin/Login" class="admin-login-link">
+                        <span class="material-symbols-rounded">admin_panel_settings</span>
+                        <span>Панель адміністратора</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Швидкі демо-картки -->
-            <div style="background: var(--surface-subtle); border: 2px dashed var(--border-color); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.75rem;">
-                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-heading); display: block; margin-bottom: 0.6rem;">Швидкий вибір тестової картки:</span>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
-                    <button type="button" class="btn-atm-outline" style="padding: 0.6rem 0.75rem; font-size: 0.85rem; border-radius: 10px; flex-direction: column; gap: 0.15rem; align-items: flex-start; text-align: left;" onclick="selectDemoCard('1234 5678 9012 3456')">
-                        <strong style="color: var(--text-heading); font-size: 0.85rem;">John Jones</strong>
-                        <span style="font-family: monospace; font-size: 0.8rem; color: var(--primary); font-weight: 600;">1234 5678 9012 3456</span>
-                    </button>
-                    <button type="button" class="btn-atm-outline" style="padding: 0.6rem 0.75rem; font-size: 0.85rem; border-radius: 10px; flex-direction: column; gap: 0.15rem; align-items: flex-start; text-align: left;" onclick="selectDemoCard('6543 2109 8765 4321')">
-                        <strong style="color: var(--text-heading); font-size: 0.85rem;">Will Smith</strong>
-                        <span style="font-family: monospace; font-size: 0.8rem; color: var(--primary); font-weight: 600;">6543 2109 8765 4321</span>
-                    </button>
+            <!-- Крок 2: Очікування PIN-коду (прев'ю як у макеті 1-login.png) -->
+            <div class="auth-col auth-col-pin auth-preview-disabled">
+                <span class="auth-step-tag">Крок 2 · PIN-код</span>
+
+                <div class="pin-dots-container">
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
                 </div>
+
+                <div class="pin-pad-grid">
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>1</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>2</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>3</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>4</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>5</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>6</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>7</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>8</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>9</span></button>
+                    <button type="button" class="pin-pad-btn action-clear" tabindex="-1"><span>⌫</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>0</span></button>
+                    <button type="button" class="pin-pad-btn action-clear" tabindex="-1"><span>C</span></button>
+                </div>
+
+                <span class="pin-attempts-info">
+                    Залишилось спроб: 3 · після цього картку буде заблоковано
+                </span>
             </div>
-
-            <button type="submit" class="btn-atm">
-                Продовжити роботу
-            </button>
-        </form>
-
-        <div style="text-align: center; margin-top: 1.5rem;">
-            <a href="/Admin/Login" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; opacity: 0.75; transition: all 0.2s ease;">
-                <span class="material-symbols-rounded" style="font-size: 18px;">admin_panel_settings</span>
-                <span>Панель адміністратора</span>
-            </a>
         </div>
     </div>
 </div>
