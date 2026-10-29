@@ -861,13 +861,245 @@ body {
     padding: 0 0.25rem;
 }
 
-/* Касовий чек (Термо-чек) */
+/* Касовий чек (Термо-чек у темній темі) */
 .receipt-card {
     background: var(--surface-2);
     border: 1px dashed var(--border-strong);
     border-radius: var(--radius-panel);
     padding: 1.75rem;
     margin-bottom: 1.5rem;
+}
+
+.receipt-header {
+    text-align: center;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.receipt-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: 0.04em;
+}
+
+.receipt-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0.25rem 0 0 0;
+}
+
+.receipt-breakdown {
+    margin-bottom: 1.25rem;
+}
+
+.receipt-breakdown-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.receipt-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.receipt-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 0.85rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.receipt-item-denom {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.denom-val {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.denom-qty {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.receipt-item-total {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.receipt-footer {
+    border-top: 1px dashed var(--border);
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.receipt-balance-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.receipt-balance-val {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+/* Operation View Styles (3-withdraw.png style) */
+.operation-card {
+    max-width: 580px;
+}
+
+.history-card {
+    max-width: 640px;
+}
+
+.operation-balance-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+}
+
+.operation-balance-badge .val {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.amount-input-wrapper {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.amount-input-large {
+    font-family: var(--font-mono) !important;
+    font-size: 2.25rem !important;
+    font-weight: 700 !important;
+    padding: 0.85rem 3.5rem 0.85rem 1.25rem !important;
+    min-height: 72px !important;
+    background: var(--surface-2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-btn) !important;
+    color: var(--text) !important;
+    width: 100%;
+}
+
+.amount-input-large:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-glow) !important;
+    outline: none !important;
+}
+
+.amount-currency-affix {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    pointer-events: none;
+}
+
+.success-icon-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(74, 222, 158, 0.12);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem auto;
+}
+
+.success-icon-badge .material-symbols-rounded {
+    font-size: 32px;
+    color: var(--accent);
+}
+
+.operation-icon-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(74, 222, 158, 0.1);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem auto;
+}
+
+.operation-icon-badge .material-symbols-rounded {
+    font-size: 28px;
+    color: var(--accent);
+}
+
+.pin-change-input {
+    letter-spacing: 0.3em;
+    font-size: 1.35rem;
+}
+
+.history-empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.empty-state-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem auto;
+    color: var(--muted);
+}
+
+.empty-state-icon .material-symbols-rounded {
+    font-size: 28px;
+}
+
+.history-empty-state h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 0.35rem 0;
+}
+
+.history-empty-state p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 /* Google Material Symbols */

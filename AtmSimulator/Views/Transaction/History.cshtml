@@ -5,25 +5,25 @@
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 640px;">
+    <div class="atm-card history-card">
         <div class="atm-header">
             <h1>Історія операцій</h1>
-            <p class="text-muted">Усього операцій за карткою: @Model.TotalCount</p>
+            <p>Усього операцій за карткою: @Model.TotalCount</p>
         </div>
 
         @if (!Model.Transactions.Any())
         {
-            <div style="text-align: center; padding: 3rem 1rem;">
-                <div style="width: 56px; height: 56px; border-radius: 16px; background: var(--surface-subtle); border: 2px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
-                    <span class="material-symbols-rounded" style="color: var(--text-muted); font-size: 32px;">receipt_long</span>
+            <div class="history-empty-state">
+                <div class="empty-state-icon">
+                    <span class="material-symbols-rounded">receipt_long</span>
                 </div>
-                <h4 style="font-weight: 700; color: var(--text-heading); margin-bottom: 0.25rem;">Транзакцій поки немає</h4>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Усі виконані операції будуть відображатися тут</p>
+                <h3>Транзакцій поки немає</h3>
+                <p>Усі виконані операції будуть відображатися тут</p>
             </div>
         }
         else
         {
-            <!-- Швидкий верхній тулбар пагінації без необхідності прокручування -->
+            <!-- Верхній тулбар пагінації -->
             <div class="history-toolbar">
                 <span class="history-summary">
                     Показано @(Math.Min((Model.CurrentPage - 1) * 10 + 1, Model.TotalCount))–@(Math.Min(Model.CurrentPage * 10, Model.TotalCount)) з @Model.TotalCount
@@ -34,35 +34,35 @@
                         @if (Model.CurrentPage > 1)
                         {
                             <a asp-action="History" asp-route-page="@(Model.CurrentPage - 1)" class="page-btn-sm" title="Попередня сторінка">
-                                <span class="material-symbols-rounded" style="font-size: 18px;">chevron_left</span>
+                                <span class="material-symbols-rounded">chevron_left</span>
                             </a>
                         }
                         else
                         {
                             <span class="page-btn-sm disabled">
-                                <span class="material-symbols-rounded" style="font-size: 18px;">chevron_left</span>
+                                <span class="material-symbols-rounded">chevron_left</span>
                             </span>
                         }
 
-                        <span class="page-badge">@Model.CurrentPage / @Model.TotalPages</span>
+                        <span class="page-badge font-mono">@Model.CurrentPage / @Model.TotalPages</span>
 
                         @if (Model.CurrentPage < Model.TotalPages)
                         {
                             <a asp-action="History" asp-route-page="@(Model.CurrentPage + 1)" class="page-btn-sm" title="Наступна сторінка">
-                                <span class="material-symbols-rounded" style="font-size: 18px;">chevron_right</span>
+                                <span class="material-symbols-rounded">chevron_right</span>
                             </a>
                         }
                         else
                         {
                             <span class="page-btn-sm disabled">
-                                <span class="material-symbols-rounded" style="font-size: 18px;">chevron_right</span>
+                                <span class="material-symbols-rounded">chevron_right</span>
                             </span>
                         }
                     </div>
                 }
             </div>
 
-            <!-- Список транзакцій зі стильним локальним скролом -->
+            <!-- Список транзакцій зі стильним темним скролом -->
             <div class="transaction-list">
                 @foreach (var t in Model.Transactions)
                 {
@@ -73,13 +73,13 @@
                             @switch (t.Type)
                             {
                                 case AtmSimulator.Models.TransactionType.Withdrawal:
-                                    <span class="material-symbols-rounded" style="font-size: 22px;">payments</span>
+                                    <span class="material-symbols-rounded">payments</span>
                                     break;
                                 case AtmSimulator.Models.TransactionType.Deposit:
-                                    <span class="material-symbols-rounded" style="font-size: 22px;">savings</span>
+                                    <span class="material-symbols-rounded">arrow_downward</span>
                                     break;
                                 case AtmSimulator.Models.TransactionType.Transfer:
-                                    <span class="material-symbols-rounded" style="font-size: 22px;">swap_horiz</span>
+                                    <span class="material-symbols-rounded">swap_horiz</span>
                                     break;
                             }
                         </div>
@@ -98,9 +98,9 @@
                                         break;
                                 }
                             </h4>
-                            <p class="transaction-date">@t.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+                            <p class="transaction-date font-mono">@t.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
                         </div>
-                        <div class="transaction-amount @(isPositive ? "positive" : "negative")">
+                        <div class="transaction-amount font-mono @(isPositive ? "positive" : "negative")">
                             @(isPositive ? "+" : "-")@t.Amount.ToString("N2") ₴
                         </div>
                     </div>
@@ -113,13 +113,13 @@
                     @if (Model.CurrentPage > 1)
                     {
                         <a asp-action="History" asp-route-page="@(Model.CurrentPage - 1)" class="page-btn" title="Попередня сторінка">
-                            <span class="material-symbols-rounded" style="font-size: 20px;">chevron_left</span>
+                            <span class="material-symbols-rounded">chevron_left</span>
                         </a>
                     }
                     else
                     {
                         <span class="page-btn disabled">
-                            <span class="material-symbols-rounded" style="font-size: 20px;">chevron_left</span>
+                            <span class="material-symbols-rounded">chevron_left</span>
                         </span>
                     }
 
@@ -142,13 +142,13 @@
                     @if (Model.CurrentPage < Model.TotalPages)
                     {
                         <a asp-action="History" asp-route-page="@(Model.CurrentPage + 1)" class="page-btn" title="Наступна сторінка">
-                            <span class="material-symbols-rounded" style="font-size: 20px;">chevron_right</span>
+                            <span class="material-symbols-rounded">chevron_right</span>
                         </a>
                     }
                     else
                     {
                         <span class="page-btn disabled">
-                            <span class="material-symbols-rounded" style="font-size: 20px;">chevron_right</span>
+                            <span class="material-symbols-rounded">chevron_right</span>
                         </span>
                     }
                 </div>
