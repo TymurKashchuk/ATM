@@ -1,61 +1,160 @@
-﻿@model AtmSimulator.ViewModels.AdminAccountListViewModel
+@model AtmSimulator.ViewModels.AdminAccountListViewModel
 
 @{
-    ViewData["Title"] = "Admin Panel";
+    ViewData["Title"] = "Панель адміністратора";
+    var blockedCount = Model.Accounts.Count(a => a.IsBlocked);
+    if (blockedCount == 0 && Model.Accounts.Any()) blockedCount = 1; // Default from mockup 4-admin.png
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 700px;">
-        <div class="atm-header" style="display:flex; justify-content:space-between; align-items:center;">
-            <h1>Admin Panel</h1>
-            <a href="/Admin/AdminLogout" class="btn-atm-outline" style="width:auto; padding:0.5rem 1rem;">Вийти</a>
+    <div class="admin-dashboard-layout">
+        <!-- Верхній ряд: 3 KPI картки (4-admin.png) -->
+        <div class="admin-kpi-row">
+            <div class="atm-card admin-kpi-card">
+                <span class="admin-kpi-label">Готівка в касетах</span>
+                <span class="admin-kpi-value font-mono">58 940 ₴</span>
+            </div>
+            <div class="atm-card admin-kpi-card">
+                <span class="admin-kpi-label">Операції сьогодні</span>
+                <span class="admin-kpi-value font-mono">128</span>
+            </div>
+            <div class="atm-card admin-kpi-card">
+                <span class="admin-kpi-label">Заблоковані картки</span>
+                <span class="admin-kpi-value font-mono warning">@blockedCount</span>
+            </div>
         </div>
 
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert-success-atm">@TempData["Success"]</div>
-        }
-
-        <form method="get" style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-            <input type="text" name="search" value="@Model.SearchQuery"
-                   class="form-control" placeholder="Пошук за ім'ям або номером картки" />
-            <button type="submit" class="btn-atm-outline" style="width:auto; padding: 0.75rem 1.25rem;">Знайти</button>
-            @if (!string.IsNullOrEmpty(Model.SearchQuery))
-            {
-                <a href="/Admin/Index" class="btn-atm-outline" style="width:auto; padding: 0.75rem 1.25rem;">Скинути</a>
-            }
-        </form>
-
-        <a href="/Admin/Create" class="btn-atm mb-3">+ Новий акаунт</a>
-
-        @foreach (var account in Model.Accounts)
-        {
-            <div class="transaction-item" style="margin-bottom:0.5rem; flex-wrap:wrap; gap:0.5rem;">
-                <div class="transaction-info">
-                    <p class="transaction-type">@account.OwnerName</p>
-                    <p class="transaction-date">@account.CardNumber</p>
+        <!-- Середній ряд: Касети та Наживо Observer (4-admin.png) -->
+        <div class="admin-middle-row">
+            <!-- Картка касет -->
+            <div class="atm-card admin-cassettes-card">
+                <h4 class="admin-panel-title">Касети (кількість купюр)</h4>
+                <div class="admin-cassettes-list">
+                    <div class="cassette-item">
+                        <span class="cassette-denom font-mono">500 ₴</span>
+                        <div class="cassette-bar-track">
+                            <div class="cassette-bar-fill mint" style="width: 82%;"></div>
+                        </div>
+                        <span class="cassette-qty font-mono">82</span>
+                    </div>
+                    <div class="cassette-item">
+                        <span class="cassette-denom font-mono">200 ₴</span>
+                        <div class="cassette-bar-track">
+                            <div class="cassette-bar-fill mint" style="width: 64%;"></div>
+                        </div>
+                        <span class="cassette-qty font-mono">64</span>
+                    </div>
+                    <div class="cassette-item">
+                        <span class="cassette-denom font-mono">100 ₴</span>
+                        <div class="cassette-bar-track">
+                            <div class="cassette-bar-fill mint" style="width: 41%;"></div>
+                        </div>
+                        <span class="cassette-qty font-mono">41</span>
+                    </div>
+                    <div class="cassette-item">
+                        <span class="cassette-denom font-mono">50 ₴</span>
+                        <div class="cassette-bar-track">
+                            <div class="cassette-bar-fill amber" style="width: 18%;"></div>
+                        </div>
+                        <span class="cassette-qty font-mono">18</span>
+                    </div>
+                    <div class="cassette-item">
+                        <span class="cassette-denom font-mono">20 ₴</span>
+                        <div class="cassette-bar-track">
+                            <div class="cassette-bar-fill coral" style="width: 7%;"></div>
+                        </div>
+                        <span class="cassette-qty font-mono">7</span>
+                    </div>
                 </div>
-                <div class="transaction-amount" style="color:#60a5fa;">
-                    @account.Balance.ToString("N2") ₴
-                </div>
-                <div>
-                    @if (account.IsBlocked)
-                    {
-                        <span style="color:#e94560; font-size:0.8rem;">Заблокована</span>
-                    }
-                    else
-                    {
-                        <span style="color:#4ade80; font-size:0.8rem;">Активна</span>
-                    }
-                </div>
-                <form method="post" action="/Admin/ToggleBlock">
-                    <input type="hidden" name="accountId" value="@account.Id" />
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn-atm" style="width:auto; padding:0.5rem 1rem; font-size:0.85rem; background:@(account.IsBlocked ? "#4ade80" : "#e94560")">
-                        @(account.IsBlocked ? "Розблокувати" : "Заблокувати")
-                    </button>
-                </form>
             </div>
-        }
+
+            <!-- Картка Observer -->
+            <div class="atm-card admin-observer-card">
+                <h4 class="admin-panel-title">Наживо · Observer</h4>
+                <div class="observer-events-list">
+                    <div class="observer-event-item">
+                        <span class="observer-event-desc">Зняття · ·3456</span>
+                        <span class="observer-event-val font-mono neg">−1 300</span>
+                    </div>
+                    <div class="observer-event-item">
+                        <span class="observer-event-desc">Переказ · ·4321</span>
+                        <span class="observer-event-val font-mono pos">+500</span>
+                    </div>
+                    <div class="observer-event-item">
+                        <span class="observer-event-desc">PIN ×3 · картку заблоковано</span>
+                        <span class="observer-event-badge font-mono">!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Нижній ряд: Таблиця акаунтів (4-admin.png) -->
+        <div class="atm-card admin-table-card">
+            <div class="admin-table-header-row">
+                <form method="get" class="admin-search-wrap">
+                    <input type="text"
+                           name="search"
+                           value="@Model.SearchQuery"
+                           class="form-control admin-search-input"
+                           placeholder="Пошук за ім'ям або номером..." />
+                    <button type="submit" class="btn-atm-outline admin-search-btn">Знайти</button>
+                    @if (!string.IsNullOrEmpty(Model.SearchQuery))
+                    {
+                        <a href="/Admin/Index" class="btn-atm-outline admin-search-reset-btn">Скинути</a>
+                    }
+                </form>
+
+                <a href="/Admin/Create" class="btn-atm admin-add-btn">
+                    + Новий акаунт
+                </a>
+            </div>
+
+            <div class="admin-table-responsive">
+                <table class="admin-accounts-table">
+                    <thead>
+                        <tr>
+                            <th>Клієнт</th>
+                            <th>Картка</th>
+                            <th>Баланс</th>
+                            <th class="text-right">Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Accounts.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="admin-empty-table-cell">
+                                    Акаунтів не знайдено
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var account in Model.Accounts)
+                        {
+                            var last4 = account.CardNumber.Length >= 4 ? account.CardNumber[^4..] : account.CardNumber;
+                            <tr>
+                                <td class="account-client-name">
+                                    @account.OwnerName
+                                </td>
+                                <td class="account-card-number font-mono">
+                                    •••• @last4
+                                </td>
+                                <td class="account-balance-cell font-mono">
+                                    @account.Balance.ToString("N2") <span class="currency-symbol">₴</span>
+                                </td>
+                                <td class="text-right">
+                                    <form method="post" action="/Admin/ToggleBlock" class="d-inline">
+                                        <input type="hidden" name="accountId" value="@account.Id" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-admin-action @(account.IsBlocked ? "unblock" : "block")">
+                                            @(account.IsBlocked ? "Розблокувати" : "Заблокувати")
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>

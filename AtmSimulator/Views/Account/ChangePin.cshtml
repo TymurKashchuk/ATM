@@ -5,53 +5,53 @@
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 440px;">
+    <div class="atm-card operation-card pin-change-card">
         <div class="atm-header">
-            <div style="width: 52px; height: 52px; border-radius: 14px; background: var(--primary-light); border: 2px solid #bfdbfe; color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
-                <span class="material-symbols-rounded" style="color: var(--primary); font-size: 28px;">password</span>
+            <div class="operation-icon-badge">
+                <span class="material-symbols-rounded">lock</span>
             </div>
             <h1>Зміна PIN-коду</h1>
-            <p class="text-muted">Введіть поточний та новий 4-значний PIN</p>
+            <p>Введіть поточний та новий 4-значний PIN</p>
         </div>
 
         <form asp-action="ChangePin" method="post">
+            @Html.AntiForgeryToken()
+
             <div class="form-group mb-3">
                 <label asp-for="CurrentPin" class="form-label">Поточний PIN</label>
                 <input asp-for="CurrentPin"
-                       class="form-control text-center"
+                       class="form-control text-center font-mono pin-change-input"
                        type="password"
                        placeholder="••••"
                        maxlength="4"
                        inputmode="numeric"
-                       style="letter-spacing: 0.3em; font-size: 1.25rem;" />
+                       autofocus />
                 <span asp-validation-for="CurrentPin" class="text-danger mt-1 d-block"></span>
             </div>
 
             <div class="form-group mb-3">
                 <label asp-for="NewPin" class="form-label">Новий PIN (4 цифри)</label>
                 <input asp-for="NewPin"
-                       class="form-control text-center"
+                       class="form-control text-center font-mono pin-change-input"
                        type="password"
                        placeholder="••••"
                        maxlength="4"
-                       inputmode="numeric"
-                       style="letter-spacing: 0.3em; font-size: 1.25rem;" />
+                       inputmode="numeric" />
                 <span asp-validation-for="NewPin" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div class="form-group mb-3">
+            <div class="form-group mb-4">
                 <label asp-for="ConfirmPin" class="form-label">Підтвердження нового PIN</label>
                 <input asp-for="ConfirmPin"
-                       class="form-control text-center"
+                       class="form-control text-center font-mono pin-change-input"
                        type="password"
                        placeholder="••••"
                        maxlength="4"
-                       inputmode="numeric"
-                       style="letter-spacing: 0.3em; font-size: 1.25rem;" />
+                       inputmode="numeric" />
                 <span asp-validation-for="ConfirmPin" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <button type="submit" class="btn-atm mt-4">
+            <button type="submit" class="btn-atm">
                 Зберегти новий PIN
             </button>
             <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">

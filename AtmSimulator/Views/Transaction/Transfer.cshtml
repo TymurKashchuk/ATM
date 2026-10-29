@@ -5,54 +5,51 @@
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 580px;">
+    <div class="atm-card operation-card">
         <div class="atm-header">
+            <div class="operation-balance-badge">
+                <span>Доступно для переказу</span>
+                <span class="val">@Model.CurrentBalance.ToString("N2") ₴</span>
+            </div>
             <h1>Переказ на картку</h1>
-            <p class="text-muted">Миттєве зарахування за 16-значним номером</p>
-        </div>
-
-        <div class="balance-box" style="padding: 1.15rem 1.5rem; margin-bottom: 1.5rem;">
-            <p class="balance-label" style="font-size: 0.85rem; margin-bottom: 0.25rem;">Доступно для переказу</p>
-            <p class="balance-amount" style="font-size: 2.25rem;">@Model.CurrentBalance.ToString("N2") ₴</p>
+            <p>Миттєве зарахування за 16-значним номером</p>
         </div>
 
         <form asp-action="Transfer" method="post">
+            @Html.AntiForgeryToken()
+
             <div class="form-group mb-3">
                 <label asp-for="RecipientCardNumber" class="form-label">Номер картки отримувача</label>
-                <div style="position: relative;">
+                <div class="card-input-wrap">
                     <input asp-for="RecipientCardNumber"
                            id="recipient-card-input"
-                           class="form-control card-format-input"
+                           class="form-control card-format-input font-mono"
                            placeholder="1234 5678 9012 3456"
                            maxlength="19"
                            inputmode="numeric"
                            autocomplete="cc-number"
-                           style="letter-spacing: 0.12em; font-family: monospace; font-size: 1.25rem; font-weight: 700; padding-left: 2.75rem;" />
-                    <div style="position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); display: flex; color: var(--primary);">
-                        <span class="material-symbols-rounded" style="font-size: 24px;">credit_card</span>
-                    </div>
+                           autofocus />
                 </div>
                 <span asp-validation-for="RecipientCardNumber" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div class="form-group mb-3">
+            <div class="form-group mb-4">
                 <label asp-for="Amount" class="form-label">Сума переказу (₴)</label>
-                <div style="position: relative;">
+                <div class="amount-input-wrapper">
                     <input asp-for="Amount"
                            id="Amount"
                            type="number"
                            step="1"
                            min="1"
                            value="@(Model.Amount > 0 ? Model.Amount.ToString("0.##") : "")"
-                           class="form-control"
-                           placeholder="Введіть суму..."
-                           style="font-size: 1.5rem; font-weight: 800; padding-left: 2.75rem; letter-spacing: -0.02em;" />
-                    <span style="position: absolute; left: 1.15rem; top: 50%; transform: translateY(-50%); font-weight: 800; font-size: 1.4rem; color: var(--text-muted);">₴</span>
+                           class="form-control amount-input-large"
+                           placeholder="0" />
+                    <span class="amount-currency-affix">₴</span>
                 </div>
                 <span asp-validation-for="Amount" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <button type="submit" class="btn-atm mt-4">
+            <button type="submit" class="btn-atm">
                 Надіслати переказ
             </button>
             <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">
