@@ -1,34 +1,60 @@
-﻿@model AtmSimulator.ViewModels.WithdrawalViewModel
+@model AtmSimulator.ViewModels.WithdrawalViewModel
 
 @{
     ViewData["Title"] = "Withdraw Cash";
 }
 
 <div class="atm-screen">
-    <div class="atm-card">
+    <div class="atm-card" style="max-width: 480px;">
         <div class="atm-header">
-            <h1>Withdraw Cash</h1>
-            <p class="text-muted">Available: <strong style="color:#4ade80">@Model.CurrentBalance.ToString("N2") ₴</strong></p>
+            <h1>Зняття готівки</h1>
+            <p class="text-muted">Поточний баланс: <strong style="color:#4ade80">@Model.CurrentBalance.ToString("N2") ₴</strong></p>
         </div>
 
-        <form asp-action="Withdraw" method="post">
+        <div style="background:#111a30; border:1px solid #1a4a7a; border-radius:8px; padding:0.75rem 1rem; margin-bottom:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:#94a3b8;">
+                <span>Добовий ліміт на зняття:</span>
+                <span style="color:#e0e0e0; font-weight:600;">@Model.DailyLimit.ToString("N0") ₴</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; margin-top:0.25rem;">
+                <span style="color:#94a3b8;">Залишок на сьогодні:</span>
+                <span style="color:#60a5fa; font-weight:700;">@Model.RemainingDailyLimit.ToString("N2") ₴</span>
+            </div>
+            <div style="font-size:0.75rem; color:#94a3b8; margin-top:0.4rem; border-top:1px solid #1a3558; padding-top:0.3rem;">
+                Комісія банкомату: <strong style="color:#fcd34d">1%</strong> | Максимум <strong style="color:#fcd34d">40 банкнот</strong> за раз
+            </div>
+        </div>
+
+        <form asp-action="Withdraw" method="post" id="withdrawForm">
             <div class="form-group">
-                <label asp-for="Amount" class="form-label">Amount (multiple of 20)</label>
-                <input asp-for="Amount" class="form-control" placeholder="e.g. 500" />
+                <label asp-for="Amount" class="form-label">Сума для зняття (кратна 20 ₴)</label>
+                <input asp-for="Amount" id="Amount" class="form-control" placeholder="наприклад, 500" oninput="calculateWithdrawalDetails()" />
                 <span asp-validation-for="Amount" class="text-danger"></span>
             </div>
 
-            <div class="quick-amounts">
+            <div class="quick-amounts mt-3">
                 <button type="button" class="quick-btn" onclick="setAmount(100)">100 ₴</button>
                 <button type="button" class="quick-btn" onclick="setAmount(200)">200 ₴</button>
                 <button type="button" class="quick-btn" onclick="setAmount(500)">500 ₴</button>
                 <button type="button" class="quick-btn" onclick="setAmount(1000)">1000 ₴</button>
+                <button type="button" class="quick-btn" onclick="setAmount(2000)">2000 ₴</button>
+            </div>
+
+            <div id="costCalculationBox" style="background:#0f2942; border:1px solid #1a4a7a; border-radius:8px; padding:0.75rem; margin-top:1rem; display:none;">
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#cbd5e1;">
+                    <span>Комісія (1%):</span>
+                    <span id="feeDisplay" style="color:#fcd34d; font-weight:600;">0.00 ₴</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.95rem; font-weight:bold; color:#e0e0e0; margin-top:0.25rem; border-top:1px solid #1a4a7a; padding-top:0.25rem;">
+                    <span>Разом до списання:</span>
+                    <span id="totalDebitDisplay" style="color:#4ade80;">0.00 ₴</span>
+                </div>
             </div>
 
             <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
 
-            <button type="submit" class="btn-atm mt-4">Withdraw →</button>
-            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">← Back</a>
+            <button type="submit" class="btn-atm mt-4">Отримати готівку →</button>
+            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">← Скасувати</a>
         </form>
     </div>
 </div>
@@ -37,6 +63,25 @@
     <script>
         function setAmount(val) {
             document.getElementById('Amount').value = val;
+            calculateWithdrawalDetails();
         }
+
+        function calculateWithdrawalDetails() {
+            const input = document.getElementById('Amount');
+            const val = parseFloat(input.value) || 0;
+            const box = document.getElementById('costCalculationBox');
+
+            if (val > 0) {
+                box.style.display = 'block';
+                const fee = Math.round(val * 0.01 * 100) / 100;
+                const total = val + fee;
+                document.getElementById('feeDisplay').innerText = fee.toFixed(2) + ' ₴';
+                document.getElementById('totalDebitDisplay').innerText = total.toFixed(2) + ' ₴';
+            } else {
+                box.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', calculateWithdrawalDetails);
     </script>
 }

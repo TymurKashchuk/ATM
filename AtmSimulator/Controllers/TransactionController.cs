@@ -2,6 +2,7 @@ using AtmSimulator.Data;
 using AtmSimulator.Services;
 using AtmSimulator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AtmSimulator.Controllers
 {
@@ -28,7 +29,13 @@ namespace AtmSimulator.Controllers
             var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
-            return View(new WithdrawalViewModel { CurrentBalance = account!.Balance });
+            var remainingLimit = await _withdrawalService.GetRemainingDailyLimitAsync(accountId);
+
+            return View(new WithdrawalViewModel
+            {
+                CurrentBalance = account!.Balance,
+                RemainingDailyLimit = remainingLimit
+            });
         }
 
         [HttpPost]
@@ -38,6 +45,7 @@ namespace AtmSimulator.Controllers
 
             var account = await _context.Accounts.FindAsync(accountId);
             model.CurrentBalance = account!.Balance;
+            model.RemainingDailyLimit = await _withdrawalService.GetRemainingDailyLimitAsync(accountId);
 
             if (!ModelState.IsValid) return View(model);
 
@@ -116,7 +124,13 @@ namespace AtmSimulator.Controllers
             var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
-            return View(new TransferViewModel { CurrentBalance = account!.Balance });
+            var card = await _context.Cards.FirstOrDefaultAsync(c => c.AccountId == accountId);
+
+            return View(new TransferViewModel
+            {
+                CurrentBalance = account!.Balance,
+                SenderCardNumber = card?.CardNumber ?? ""
+            });
         }
 
         [HttpPost]
@@ -125,7 +139,10 @@ namespace AtmSimulator.Controllers
             var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
+            var card = await _context.Cards.FirstOrDefaultAsync(c => c.AccountId == accountId);
+
             model.CurrentBalance = account!.Balance;
+            model.SenderCardNumber = card?.CardNumber ?? "";
 
             if (!ModelState.IsValid) return View(model);
 
