@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Services;
 using AtmSimulator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -62,7 +62,19 @@ namespace AtmSimulator.Controllers
             var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
-            return View(new DepositViewModel { CurrentBalance = account!.Balance });
+            var denominations = await _depositService.GetSupportedDenominationsAsync();
+
+            var viewModel = new DepositViewModel
+            {
+                CurrentBalance = account!.Balance,
+                Banknotes = denominations.Select(d => new BanknoteDepositItem
+                {
+                    Denomination = d,
+                    Count = 0
+                }).ToList()
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -73,14 +85,24 @@ namespace AtmSimulator.Controllers
             var account = await _context.Accounts.FindAsync(accountId);
             model.CurrentBalance = account!.Balance;
 
+            var banknotesDict = model.Banknotes?
+                .Where(b => b.Count > 0)
+                .ToDictionary(b => b.Denomination, b => b.Count) ?? new Dictionary<int, int>();
+
+            if (!banknotesDict.Any())
+            {
+                ModelState.AddModelError("", "Будь ласка, вкажіть кількість хоча б однієї купюри для поповнення");
+                return View(model);
+            }
+
             if (!ModelState.IsValid) return View(model);
 
             try
             {
-                await _depositService.DepositAsync(accountId, model.Amount);
+                var depositedAmount = await _depositService.DepositAsync(accountId, banknotesDict);
                 await _context.Entry(account).ReloadAsync();
 
-                TempData["Success"] = $"Успішно внесено {model.Amount:N2} ₴";
+                TempData["Success"] = $"Успішно внесено {depositedAmount:N2} ₴";
                 return RedirectToAction("Index", "Account");
             }
             catch (InvalidOperationException ex)
