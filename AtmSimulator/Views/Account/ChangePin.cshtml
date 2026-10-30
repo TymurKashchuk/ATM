@@ -1,51 +1,62 @@
-﻿@model AtmSimulator.ViewModels.ChangePinViewModel;
+@model AtmSimulator.ViewModels.ChangePinViewModel
 
 @{
-	ViewData["Title"] = "Change PIN";
+    ViewData["Title"] = "Зміна PIN-коду";
 }
 
 <div class="atm-screen">
-	<div class="atm-card">
-		<div class="atm-header">
-			<h1>Change PIN</h1>
-			<p class="text-muted">Enter your current and new PIN</p>
-		</div>
+    <div class="atm-card operation-card pin-change-card">
+        <div class="atm-header">
+            <div class="operation-icon-badge">
+                <span class="material-symbols-rounded">lock</span>
+            </div>
+            <h1>Зміна PIN-коду</h1>
+            <p>Введіть поточний та новий 4-значний PIN</p>
+        </div>
 
         <form asp-action="ChangePin" method="post">
-            <div class="form-group">
-                <label asp-for="CurrentPin" class="form-label">Current PIN</label>
+            @Html.AntiForgeryToken()
+
+            <div class="form-group mb-3">
+                <label asp-for="CurrentPin" class="form-label">Поточний PIN</label>
                 <input asp-for="CurrentPin"
-                       class="form-control text-center"
+                       class="form-control text-center font-mono pin-change-input"
                        type="password"
                        placeholder="••••"
-                       maxlength="4" />
-                <span asp-validation-for="CurrentPin" class="text-danger"></span>
+                       maxlength="4"
+                       inputmode="numeric"
+                       autofocus />
+                <span asp-validation-for="CurrentPin" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div class="form-group mt-3">
-                <label asp-for="NewPin" class="form-label">New PIN</label>
+            <div class="form-group mb-3">
+                <label asp-for="NewPin" class="form-label">Новий PIN (4 цифри)</label>
                 <input asp-for="NewPin"
-                       class="form-control text-center"
+                       class="form-control text-center font-mono pin-change-input"
                        type="password"
                        placeholder="••••"
-                       maxlength="4" />
-                <span asp-validation-for="NewPin" class="text-danger"></span>
+                       maxlength="4"
+                       inputmode="numeric" />
+                <span asp-validation-for="NewPin" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div class="form-group mt-3">
-                <label asp-for="ConfirmPin" class="form-label">Confirm New PIN</label>
+            <div class="form-group mb-4">
+                <label asp-for="ConfirmPin" class="form-label">Підтвердження нового PIN</label>
                 <input asp-for="ConfirmPin"
-                       class="form-control text-center"
+                       class="form-control text-center font-mono pin-change-input"
                        type="password"
                        placeholder="••••"
-                       maxlength="4" />
-                <span asp-validation-for="ConfirmPin" class="text-danger"></span>
+                       maxlength="4"
+                       inputmode="numeric" />
+                <span asp-validation-for="ConfirmPin" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
-
-            <button type="submit" class="btn-atm mt-4">Change PIN →</button>
-            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">← Back</a>
+            <button type="submit" class="btn-atm">
+                Зберегти новий PIN
+            </button>
+            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">
+                Назад у меню
+            </a>
         </form>
-	</div>
+    </div>
 </div>

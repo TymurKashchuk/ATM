@@ -1,37 +1,98 @@
-﻿@model AtmSimulator.ViewModels.CardViewModel
+@model AtmSimulator.ViewModels.CardViewModel
 
 @{
-	ViewData["Title"] = "Insert Card";
-}
-
-@if (TempData["BlockedMessage"] != null)
-{
-    <div class="alert-danger mb-3">@TempData["BlockedMessage"]</div>
+    ViewData["Title"] = "Вставте картку";
 }
 
 <div class="atm-screen">
-    <div class="atm-card">
-        <div class="atm-header">
-            <h1>Welcome</h1>
-            <p class="text-muted">Enter your card number to continue</p>
-        </div>
+    <div class="atm-card auth-card">
+        <div class="auth-layout">
+            <!-- Крок 1: Введення картки -->
+            <div class="auth-col">
+                <span class="auth-step-tag">Крок 1 · картка</span>
+                <h1 class="auth-heading">Вставте картку</h1>
 
-        <form action="/Auth/InsertCard" method="post">
-            @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label asp-for="CardNumber" class="form-label">Card Number</label>
-                <input asp-for="CardNumber"
-                       class="form-control"
-                       placeholder="1234 5678 9012 3456"
-                       maxlength="16" />
-                <span asp-validation-for="CardNumber" class="text-danger"></span>
+                <div class="card-slot-wrap">
+                    <div class="card-slot-glow"></div>
+                </div>
+
+                <form action="/Auth/InsertCard" method="post" id="card-form">
+                    @Html.AntiForgeryToken()
+
+                    <label asp-for="CardNumber" class="auth-subtext">Або введіть номер вручну</label>
+                    <div class="form-group mb-3">
+                        <input asp-for="CardNumber"
+                               id="card-number-input"
+                               class="form-control card-input-large card-format-input"
+                               placeholder="1234 5678 9012 3456"
+                               maxlength="19"
+                               inputmode="numeric"
+                               autocomplete="cc-number"
+                               autofocus />
+                    </div>
+
+                    <div class="demo-cards-row">
+                        <button type="button" class="demo-card-pill" onclick="selectDemoCard('1234 5678 9012 3456')">
+                            John Jones · 3456
+                        </button>
+                        <button type="button" class="demo-card-pill" onclick="selectDemoCard('6543 2109 8765 4321')">
+                            Will Smith · 4321
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn-atm">
+                        Продовжити роботу
+                    </button>
+                </form>
+
+                <div class="admin-entry-link-wrap">
+                    <a href="/Admin/Login" class="admin-login-link">
+                        <span class="material-symbols-rounded">admin_panel_settings</span>
+                        <span>Панель адміністратора</span>
+                    </a>
+                </div>
             </div>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
+            <!-- Крок 2: Очікування PIN-коду (прев'ю як у макеті 1-login.png) -->
+            <div class="auth-col auth-col-pin auth-preview-disabled">
+                <span class="auth-step-tag">Крок 2 · PIN-код</span>
 
-            <button type="submit" class="btn-atm mt-4">
-                Insert Card →
-            </button>
-        </form>
+                <div class="pin-dots-container">
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                </div>
+
+                <div class="pin-pad-grid">
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>1</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>2</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>3</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>4</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>5</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>6</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>7</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>8</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>9</span></button>
+                    <button type="button" class="pin-pad-btn action-clear" tabindex="-1"><span>⌫</span></button>
+                    <button type="button" class="pin-pad-btn" tabindex="-1"><span>0</span></button>
+                    <button type="button" class="pin-pad-btn action-clear" tabindex="-1"><span>C</span></button>
+                </div>
+
+                <span class="pin-attempts-info">
+                    Залишилось спроб: 3 · після цього картку буде заблоковано
+                </span>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    function selectDemoCard(number) {
+        const input = document.getElementById('card-number-input');
+        if (input) {
+            input.value = number;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+</script>

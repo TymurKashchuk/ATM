@@ -1,17 +1,21 @@
 @model AtmSimulator.ViewModels.TransferViewModel
 
 @{
-    ViewData["Title"] = "Transfer";
+    ViewData["Title"] = "Переказ коштів";
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 480px;">
+    <div class="atm-card operation-card">
         <div class="atm-header">
-            <h1>Переказ коштів</h1>
-            <p class="text-muted">Поточний баланс: <strong style="color:#4ade80">@Model.CurrentBalance.ToString("N2") ₴</strong></p>
+            <div class="operation-balance-badge">
+                <span>Доступно для переказу</span>
+                <span class="val">@Model.CurrentBalance.ToString("N2") ₴</span>
+            </div>
+            <h1>Переказ на картку</h1>
+            <p>Миттєве зарахування за 16-значним номером</p>
         </div>
 
-        <div style="background:#111a30; border:1px solid #1a4a7a; border-radius:8px; padding:0.6rem 0.9rem; margin-bottom:1.25rem; font-size:0.8rem; color:#94a3b8;">
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 0.6rem 0.9rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: #94a3b8;">
             <div>Тарифи комісії:</div>
             <div style="display:flex; justify-content:space-between; margin-top:0.25rem;">
                 <span>• На картки нашого банку:</span>
@@ -24,30 +28,43 @@
         </div>
 
         <form asp-action="Transfer" method="post" id="transferForm">
+            @Html.AntiForgeryToken()
             <input type="hidden" id="SenderCardNumber" value="@Model.SenderCardNumber" />
 
-            <div class="form-group">
-                <label asp-for="RecipientCardNumber" class="form-label">Номер картки одержувача (16 цифр)</label>
-                <input asp-for="RecipientCardNumber"
-                       id="RecipientCardNumber"
-                       class="form-control"
-                       placeholder="1234 5678 9012 3456"
-                       maxlength="16"
-                       oninput="calculateTransferDetails()" />
-                <span asp-validation-for="RecipientCardNumber" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label asp-for="RecipientCardNumber" class="form-label">Номер картки отримувача</label>
+                <div class="card-input-wrap">
+                    <input asp-for="RecipientCardNumber"
+                           id="recipient-card-input"
+                           class="form-control card-format-input font-mono"
+                           placeholder="1234 5678 9012 3456"
+                           maxlength="19"
+                           inputmode="numeric"
+                           autocomplete="cc-number"
+                           oninput="calculateTransferDetails()"
+                           autofocus />
+                </div>
+                <span asp-validation-for="RecipientCardNumber" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div class="form-group mt-3">
+            <div class="form-group mb-4">
                 <label asp-for="Amount" class="form-label">Сума переказу (₴)</label>
-                <input asp-for="Amount"
-                       id="TransferAmount"
-                       class="form-control"
-                       placeholder="наприклад, 500"
-                       oninput="calculateTransferDetails()" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
+                <div class="amount-input-wrapper">
+                    <input asp-for="Amount"
+                           id="Amount"
+                           type="number"
+                           step="1"
+                           min="1"
+                           value="@(Model.Amount > 0 ? Model.Amount.ToString("0.##") : "")"
+                           class="form-control amount-input-large"
+                           placeholder="0"
+                           oninput="calculateTransferDetails()" />
+                    <span class="amount-currency-affix">₴</span>
+                </div>
+                <span asp-validation-for="Amount" class="text-danger mt-1 d-block"></span>
             </div>
 
-            <div id="transferCostBox" style="background:#0f2942; border:1px solid #1a4a7a; border-radius:8px; padding:0.75rem; margin-top:1rem; display:none;">
+            <div id="transferCostBox" style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 0.75rem; margin-bottom: 1.25rem; display: none;">
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#cbd5e1;">
                     <span id="transferTypeLabel">Тип переказу:</span>
                     <span id="transferTypeBadge" style="font-weight:600;">Внутрішній (0%)</span>
@@ -56,16 +73,20 @@
                     <span>Комісія:</span>
                     <span id="transferFeeDisplay" style="color:#fcd34d; font-weight:600;">0.00 ₴</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; font-size:0.95rem; font-weight:bold; color:#e0e0e0; margin-top:0.25rem; border-top:1px solid #1a4a7a; padding-top:0.25rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.95rem; font-weight:bold; color:#e0e0e0; margin-top:0.25rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.25rem;">
                     <span>Разом до списання:</span>
                     <span id="transferTotalDisplay" style="color:#4ade80;">0.00 ₴</span>
                 </div>
             </div>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
-            <button type="submit" class="btn-atm mt-4">Переказати кошти →</button>
-            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">← Скасувати</a>
+            <button type="submit" class="btn-atm">
+                Надіслати переказ →
+            </button>
+            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">
+                Повернутися в меню
+            </a>
         </form>
     </div>
 </div>
@@ -73,16 +94,16 @@
 @section Scripts {
     <script>
         function calculateTransferDetails() {
-            const senderCard = (document.getElementById('SenderCardNumber').value || '').trim();
-            const recipientCard = (document.getElementById('RecipientCardNumber').value || '').trim();
-            const amount = parseFloat(document.getElementById('TransferAmount').value) || 0;
+            const senderCard = (document.getElementById('SenderCardNumber').value || '').replace(/\s+/g, '');
+            const rawRecipient = (document.getElementById('recipient-card-input').value || '').replace(/\s+/g, '');
+            const amount = parseFloat(document.getElementById('Amount').value) || 0;
             const box = document.getElementById('transferCostBox');
 
-            if (amount > 0 && recipientCard.length >= 6) {
+            if (amount > 0 && rawRecipient.length >= 6) {
                 box.style.display = 'block';
 
                 const senderBin = senderCard.substring(0, 6);
-                const recipientBin = recipientCard.substring(0, 6);
+                const recipientBin = rawRecipient.substring(0, 6);
                 const isExternal = (senderBin !== recipientBin);
 
                 const fee = isExternal ? Math.round(amount * 0.02 * 100) / 100 : 0;
@@ -92,7 +113,7 @@
                     document.getElementById('transferTypeBadge').innerText = 'Стороння картка (2%)';
                     document.getElementById('transferTypeBadge').style.color = '#fcd34d';
                 } else {
-                    document.getElementById('transferTypeBadge').innerText = 'Картка банку (0%)';
+                    document.getElementById('transferTypeBadge').innerText = 'Картка нашого банку (0%)';
                     document.getElementById('transferTypeBadge').style.color = '#4ade80';
                 }
 

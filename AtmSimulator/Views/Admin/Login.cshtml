@@ -1,24 +1,35 @@
-﻿@{
-    ViewData["Title"] = "Admin Login";
+@{
+    ViewData["Title"] = "Вхід адміністратора";
 }
 
 <div class="atm-screen">
-    <div class="atm-card">
+    <div class="atm-card admin-login-card">
         <div class="atm-header">
-            <h1>Admin Panel</h1>
+            <div class="admin-icon-badge">
+                <span class="material-symbols-rounded">admin_panel_settings</span>
+            </div>
+            <h1>Адміністратор</h1>
+            <p>Введіть пароль для доступу до панелі керування</p>
         </div>
 
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert-danger mb-3">@ViewBag.Error</div>
-        }
-
         <form method="post">
-            <div class="form-group mb-3">
-                <label class="form-label">Пароль</label>
-                <input type="password" name="password" class="form-control" />
+            @Html.AntiForgeryToken()
+
+            <div class="form-group mb-4">
+                <label class="form-label text-center">Пароль доступу</label>
+                <input type="password"
+                       name="password"
+                       class="form-control text-center admin-password-input font-mono"
+                       placeholder="••••••••"
+                       autofocus />
             </div>
-            <button type="submit" class="btn-atm">Увійти →</button>
+
+            <button type="submit" class="btn-atm">
+                Увійти
+            </button>
+            <a href="/Auth/InsertCard" class="btn-atm-outline mt-2">
+                Повернутися до банкомата
+            </a>
         </form>
     </div>
 </div>

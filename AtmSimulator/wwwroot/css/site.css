@@ -1,10 +1,185 @@
+:root {
+    --bg: #0E1116;
+    --surface: #161B22;
+    --surface-2: #1C2430;
+    --border: #262D38;
+    --border-strong: #2F3846;
+    --text: #E8ECF1;
+    --muted: #9AA6B5;
+    --accent: #4ADE9E;
+    --accent-text: #0E1116;
+    --accent-hover: #3ecc8c;
+    --accent-glow: rgba(74, 222, 158, 0.25);
+    --warning: #FFB547;
+    --danger: #FF6B6B;
+    --danger-bg: rgba(255, 107, 107, 0.12);
+    --danger-border: rgba(255, 107, 107, 0.25);
+    --success: #4ADE9E;
+    --success-bg: rgba(74, 222, 158, 0.12);
+    --success-border: rgba(74, 222, 158, 0.25);
+
+    --font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    --radius-panel: 20px;
+    --radius-btn: 14px;
+    --radius-key: 16px;
+    --radius-pill: 99px;
+
+    --min-h-btn: 48px;
+    --min-h-key: 64px;
+
+    --shadow-atm: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    --shadow-slot-glow: 0 0 16px rgba(74, 222, 158, 0.45);
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    background-color: #1a1a2e;
+    background-color: var(--bg);
+    color: var(--text);
     min-height: 100vh;
+    font-family: var(--font-sans);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Обгортка застосунку банкомата */
+.atm-app-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Верхня панель термінала */
+.atm-topbar {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.atm-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+}
+
+.atm-brand-link:hover {
+    color: var(--accent);
+}
+
+.atm-brand-icon {
+    font-size: 24px;
+    color: var(--accent);
+}
+
+.atm-brand-text {
+    font-weight: 700;
+}
+
+.atm-topbar-center {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Segoe UI', sans-serif;
+}
+
+.step-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+}
+
+.step-pill {
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.825rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.step-pill.active {
+    background: var(--accent);
+    color: var(--accent-text);
+    font-weight: 700;
+}
+
+.admin-state-indicator .step-pill.active {
+    background: var(--accent);
+    color: var(--accent-text);
+}
+
+.atm-topbar-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.topbar-terminal-meta {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.topbar-logout-link {
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.topbar-logout-link:hover {
+    color: var(--text);
+}
+
+.topbar-action-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.topbar-action-link:hover {
+    border-color: var(--border-strong);
+    color: var(--accent);
+}
+
+/* Головний контейнер контенту */
+.atm-main-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1.5rem 3rem 1.5rem;
+    width: 100%;
 }
 
 .atm-screen {
@@ -12,17 +187,19 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
 }
 
+/* Корпус / картка термінала */
 .atm-card {
-    background: #16213e;
-    border: 1px solid #0f3460;
-    border-radius: 16px;
-    padding: 2.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    padding: 2.25rem 2.25rem;
     width: 100%;
-    max-width: 420px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    max-width: 640px;
+    box-shadow: var(--shadow-atm);
 }
 
 .atm-header {
@@ -30,315 +207,2013 @@ body {
     margin-bottom: 2rem;
 }
 
-    .atm-header h1 {
-        color: #e0e0e0;
-        font-size: 1.8rem;
-        font-weight: 600;
-    }
+.atm-header h1 {
+    color: var(--text);
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
 
-    .atm-header p {
-        color: #888;
-        margin-top: 0.25rem;
-    }
+.atm-header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    font-weight: 400;
+}
+
+/* Типографіка та моноширинний текст */
+.font-mono {
+    font-family: var(--font-mono) !important;
+}
+
+/* Приховування спінера для number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Форми та поля вводу */
+.form-group {
+    margin-bottom: 1.25rem;
+}
 
 .form-label {
-    color: #ccc;
-    font-size: 0.9rem;
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
 }
 
 .form-control {
-    background: #0f3460;
-    border: 1px solid #1a4a7a;
-    color: #e0e0e0;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius-btn);
+    padding: 0.85rem 1.15rem;
+    min-height: var(--min-h-btn);
+    font-size: 1.05rem;
+    font-weight: 500;
+    font-family: var(--font-sans);
     width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-    .form-control:focus {
-        background: #0f3460;
-        border-color: #e94560;
-        color: #e0e0e0;
-        box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
-        outline: none;
-    }
+.form-control:focus {
+    background: var(--surface-2);
+    border-color: var(--accent);
+    color: var(--text);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+    outline: none;
+}
 
+.form-control::placeholder {
+    color: rgba(154, 166, 181, 0.45);
+}
+
+/* Кнопки */
 .btn-atm {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
     width: 100%;
-    padding: 0.85rem;
-    background: #e94560;
-    color: white;
+    min-height: var(--min-h-btn);
+    padding: 0.85rem 1.5rem;
+    background: var(--accent);
+    color: var(--accent-text) !important;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-btn);
     font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-family: var(--font-sans);
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-atm:hover {
+    background: var(--accent-hover);
+    color: var(--accent-text) !important;
+}
+
+.btn-atm:active {
+    transform: scale(0.99);
+}
+
+.btn-atm-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: var(--min-h-btn);
+    padding: 0.85rem 1.25rem;
+    background: var(--surface-2);
+    color: var(--text) !important;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    transition: background 0.2s;
+    font-family: var(--font-sans);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-    .btn-atm:hover {
-        background: #c73652;
-        color: white;
-    }
-
-.btn-atm-outline {
-    display: block;
-    width: 100%;
-    padding: 0.85rem;
-    background: transparent;
-    color: #888;
-    border: 1px solid #333;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: all 0.2s;
+.btn-atm-outline:hover {
+    background: #222b3a;
+    border-color: var(--border-strong);
+    color: var(--text) !important;
 }
 
-    .btn-atm-outline:hover {
-        border-color: #e94560;
-        color: #e94560;
-    }
+.btn-atm-danger {
+    background: var(--danger-bg);
+    color: var(--danger) !important;
+    border: 1px solid var(--danger-border);
+}
 
+.btn-atm-danger:hover {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: var(--danger);
+    color: var(--danger) !important;
+}
+
+/* Повідомлення */
 .alert-danger {
-    background: rgba(233, 69, 96, 0.15);
-    border: 1px solid rgba(233, 69, 96, 0.3);
-    color: #e94560;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    color: var(--danger);
+    border-radius: var(--radius-btn);
+    padding: 0.85rem 1.15rem;
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .text-danger {
-    color: #e94560 !important;
-    font-size: 0.8rem;
-}
-
-.text-muted {
-    color: white !important;
+    color: var(--danger) !important;
     font-size: 0.85rem;
-    margin-top: 0.25rem;
+    font-weight: 500;
 }
 
-
-.balance-box {
-    background: #0f3460;
-    border-radius: 12px;
-    padding: 1.25rem;
-    text-align: center;
+.alert-success-atm {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--accent);
+    border-radius: var(--radius-btn);
+    padding: 0.85rem 1.15rem;
+    font-size: 0.95rem;
+    font-weight: 600;
     margin-bottom: 1.5rem;
+    text-align: center;
 }
 
-.balance-label {
-    color: #888;
+/* Банківська картка клієнта (2-menu.png) */
+.bank-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    padding: 1.75rem 1.75rem 1.5rem 1.75rem;
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+}
+
+.bank-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.bank-card-chip {
+    width: 44px;
+    height: 32px;
+    background: #d4a342;
+    border-radius: 6px;
+    border: 1px solid #b88628;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    padding: 3px;
+}
+
+.bank-card-chip-cell {
+    border: 1px solid #996e1b;
+    border-radius: 2px;
+}
+
+.bank-card-status-pill {
     font-size: 0.85rem;
-    margin-bottom: 0.25rem;
+    font-weight: 500;
+    color: var(--muted);
 }
 
-.balance-amount {
-    color: #4ade80;
-    font-size: 2rem;
+.bank-card-status-pill.active {
+    color: var(--accent);
+}
+
+.bank-card-number-mid {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
     font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    margin: 0 0 2rem 0;
+    white-space: nowrap;
+}
+
+.bank-card-footer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.bank-card-holder-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
     margin: 0;
 }
 
+.bank-card-expiry {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* Блок балансу */
+.balance-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    padding: 1.75rem;
+    text-align: left;
+    margin-bottom: 1.25rem;
+}
+
+.balance-box-label,
+.balance-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem 0;
+}
+
+.balance-box-val,
+.balance-amount {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.currency-symbol,
+.balance-amount .currency {
+    color: var(--accent);
+    margin-left: 0.35rem;
+}
+
+/* Блок "Останні операції" (як у макеті 2-menu.png) */
+.recent-ops-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    padding: 1.5rem 1.75rem;
+}
+
+.recent-ops-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 1.25rem 0;
+}
+
+.recent-ops-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.recent-op-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.recent-op-desc {
+    font-size: 0.925rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.recent-op-amount {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.recent-op-amount.neg {
+    color: var(--text);
+}
+
+.recent-op-amount.pos {
+    color: var(--accent);
+}
+
+/* Меню термінала (2-menu.png) */
+.menu-dashboard {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1100px;
+    align-items: start;
+}
+
+.menu-left-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-right-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-grid-3x2,
 .menu-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
 }
 
+.menu-card-btn,
 .menu-btn {
-    display: block;
-    padding: 1rem;
-    background: #0f3460;
-    border: 1px solid #1a4a7a;
-    border-radius: 10px;
-    color: #e0e0e0;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    color: var(--text);
     text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.2s;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+    min-height: 130px;
 }
 
-    .menu-btn:hover {
-        background: #1a4a7a;
-        border-color: #e94560;
-        color: #fff;
-    }
-
-.menu-btn-danger:hover {
-    background: rgba(233, 69, 96, 0.15);
-    border-color: #e94560;
-    color: #e94560;
+.menu-card-btn:hover,
+.menu-btn:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+    color: var(--text);
+    transform: translateY(-2px);
 }
 
+.menu-card-icon,
+.menu-btn-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    background: transparent;
+    border: none;
+}
 
+.menu-card-icon .material-symbols-rounded,
+.menu-btn-icon .material-symbols-rounded {
+    font-size: 30px;
+    color: var(--accent);
+}
+
+.menu-card-title,
+.menu-btn-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text);
+}
+
+.menu-card-desc,
+.menu-btn-desc {
+    font-size: 0.825rem;
+    color: var(--muted);
+    margin: 0.35rem 0 0 0;
+    font-weight: 400;
+}
+
+.menu-btn-danger .menu-card-icon,
+.menu-btn-danger .menu-btn-icon {
+    color: var(--accent);
+}
+
+/* Швидкі суми (Quick amounts) */
 .quick-amounts {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
     margin-top: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .quick-btn {
-    padding: 0.6rem;
-    background: #0f3460;
-    border: 1px solid #1a4a7a;
-    border-radius: 8px;
-    color: #e0e0e0;
+    min-height: var(--min-h-btn);
+    padding: 0.75rem 0.5rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    color: var(--text);
     cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-}
-
-    .quick-btn:hover {
-        border-color: #e94560;
-        color: #e94560;
-    }
-
-.dispensed-cash {
-    background: #0f3460;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
-
-.banknote-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.4rem 0;
-    border-bottom: 1px solid #1a4a7a;
-    color: #e0e0e0;
-    font-size: 0.9rem;
-}
-
-    .banknote-row:last-child {
-        border-bottom: none;
-    }
-
-
-.alert-success-atm {
-    background: rgba(74, 222, 128, 0.1);
-    border: 1px solid rgba(74, 222, 128, 0.25);
-    color: #4ade80;
-    border-radius: 8px;
-    padding: 0.65rem 1rem;
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
     text-align: center;
-    letter-spacing: 0.01em;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
+.quick-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(74, 222, 158, 0.08);
+}
 
+/* PIN-пад банкомата */
+.pin-dots-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0 2rem 0;
+}
+
+.pin-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--border-strong);
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.pin-dot.filled {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.pin-pad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.pin-pad-btn {
+    min-height: var(--min-h-key);
+    height: 64px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-key);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
+}
+
+.pin-pad-btn:hover {
+    background: #232d3d;
+    border-color: var(--border-strong);
+    color: var(--accent);
+}
+
+.pin-pad-btn:active {
+    transform: scale(0.97);
+}
+
+.pin-pad-btn.action-clear {
+    color: var(--muted);
+    font-size: 1.1rem;
+}
+
+.pin-pad-btn.action-clear:hover {
+    color: var(--text);
+}
+
+/* Історія транзакцій */
 .transaction-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 0.65rem;
+    margin-bottom: 1.5rem;
+    max-height: 460px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.transaction-list::-webkit-scrollbar {
+    width: 6px;
+}
+.transaction-list::-webkit-scrollbar-track {
+    background: var(--surface-2);
+    border-radius: 4px;
+}
+.transaction-list::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+}
+.transaction-list::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
 }
 
 .transaction-item {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: #0f3460;
-    border-radius: 10px;
-    padding: 0.85rem 1rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    padding: 1rem 1.25rem;
+    transition: border-color 0.15s ease;
+}
+
+.transaction-item:hover {
+    border-color: var(--border-strong);
 }
 
 .transaction-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(74, 222, 158, 0.1);
+    color: var(--accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
     flex-shrink: 0;
 }
 
-    .transaction-icon.withdrawal {
-        background: rgba(233, 69, 96, 0.2);
-        color: #e94560;
-    }
+.transaction-icon.withdrawal {
+    background: rgba(255, 107, 107, 0.12);
+    color: var(--danger);
+}
 
-    .transaction-icon.deposit {
-        background: rgba(74, 222, 128, 0.2);
-        color: #4ade80;
-    }
+.transaction-icon.deposit {
+    background: rgba(74, 222, 158, 0.12);
+    color: var(--accent);
+}
 
-    .transaction-icon.transfer {
-        background: rgba(96, 165, 250, 0.2);
-        color: #60a5fa;
-    }
+.transaction-icon.transfer {
+    background: rgba(154, 166, 181, 0.12);
+    color: var(--text);
+}
 
 .transaction-info {
     flex: 1;
 }
 
 .transaction-type {
-    color: #e0e0e0;
-    font-size: 0.9rem;
-    font-weight: 500;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 600;
     margin: 0;
 }
 
 .transaction-date {
-    color: #888;
-    font-size: 0.75rem;
-    margin: 0;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin: 0.2rem 0 0 0;
 }
 
 .transaction-amount {
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.05rem;
 }
 
-    .transaction-amount.positive {
-        color: #4ade80;
-    }
+.transaction-amount.positive {
+    color: var(--accent);
+}
 
-    .transaction-amount.negative {
-        color: #e94560;
-    }
+.transaction-amount.negative {
+    color: var(--text);
+}
 
-.empty-state {
-    text-align: center;
-    color: #888;
-    padding: 2rem 0;
+/* Пагінація та тулбар історії транзакцій */
+.history-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    margin-bottom: 1rem;
+}
+
+.history-summary {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.pagination-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.page-btn-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.page-btn-sm:hover:not(.disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.page-btn-sm.disabled,
+.page-btn.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.page-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    padding: 0 0.5rem;
 }
 
 .pagination {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
 }
 
 .page-btn {
-    padding: 0.5rem 1rem;
-    background: #0f3460;
-    border: 1px solid #1a4a7a;
-    border-radius: 8px;
-    color: #e0e0e0;
+    padding: 0.5rem 0.9rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
     text-decoration: none;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-    .page-btn:hover {
-        border-color: #e94560;
-        color: #e94560;
+.page-btn:hover:not(.disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.page-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 0.5rem;
+    border-radius: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.page-num:hover:not(.active) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.page-num.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-text);
+}
+
+.page-dots {
+    color: var(--muted);
+    font-weight: 700;
+    padding: 0 0.25rem;
+}
+
+/* Касовий чек (Термо-чек у темній темі) */
+.receipt-card {
+    background: var(--surface-2);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-panel);
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.receipt-header {
+    text-align: center;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.receipt-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: 0.04em;
+}
+
+.receipt-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0.25rem 0 0 0;
+}
+
+.receipt-breakdown {
+    margin-bottom: 1.25rem;
+}
+
+.receipt-breakdown-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.receipt-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.receipt-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 0.85rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.receipt-item-denom {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.denom-val {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.denom-qty {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.receipt-item-total {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.receipt-footer {
+    border-top: 1px dashed var(--border);
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.receipt-balance-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.receipt-balance-val {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+/* Operation View Styles (3-withdraw.png style) */
+.withdraw-dashboard {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 1.75rem;
+    width: 100%;
+    max-width: 1100px;
+    align-items: start;
+}
+
+.withdraw-form-card {
+    max-width: 100%;
+    padding: 2.25rem;
+}
+
+.withdraw-header {
+    margin-bottom: 1.25rem;
+}
+
+.withdraw-subtext {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.withdraw-amount-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.withdraw-amount-field {
+    font-family: var(--font-mono) !important;
+    font-size: 3.25rem !important;
+    font-weight: 700 !important;
+    color: var(--text) !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    max-width: 180px !important;
+    outline: none !important;
+    box-shadow: none !important;
+    line-height: 1 !important;
+    height: auto !important;
+    min-height: unset !important;
+}
+
+.withdraw-amount-currency {
+    font-family: var(--font-mono);
+    font-size: 3.25rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.withdraw-presets-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.withdraw-preset-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+}
+
+.withdraw-preset-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.dispense-strategy-wrap {
+    margin-bottom: 2rem;
+}
+
+.dispense-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.85rem;
+}
+
+.dispense-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dispense-option-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.15rem 1.25rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.dispense-option-card.active {
+    border: 1.5px solid var(--accent);
+    background: rgba(74, 222, 158, 0.03);
+}
+
+.dispense-opt-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.dispense-opt-desc {
+    font-size: 0.825rem;
+    color: var(--muted);
+}
+
+.withdraw-submit-btn {
+    margin-top: 0.5rem;
+}
+
+/* Права колонка розрахунку видачі */
+.withdraw-calc-card {
+    max-width: 100%;
+    padding: 2.25rem;
+}
+
+.calc-card-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 2rem 0;
+}
+
+.calc-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    min-height: 120px;
+}
+
+.calc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.calc-denom-col {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.calc-swatch {
+    width: 54px;
+    height: 32px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.calc-swatch.blue { background: #8AB4F8; }
+.calc-swatch.peach { background: #F87171; }
+.calc-swatch.purple { background: #C084FC; }
+.calc-swatch.amber { background: #FBBF24; }
+.calc-swatch.coral { background: #FB7185; }
+
+.calc-denom-text {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.calc-row-total {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.calc-footer-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2.5rem 0 1.5rem 0;
+}
+
+.calc-remaining-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.calc-remaining-label {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.calc-remaining-val {
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.calc-status-note {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+.operation-card {
+    max-width: 580px;
+}
+
+.history-card {
+    max-width: 640px;
+}
+
+.operation-balance-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+}
+
+.operation-balance-badge .val {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.amount-input-wrapper {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.amount-input-large {
+    font-family: var(--font-mono) !important;
+    font-size: 2.25rem !important;
+    font-weight: 700 !important;
+    padding: 0.85rem 3.5rem 0.85rem 1.25rem !important;
+    min-height: 72px !important;
+    background: var(--surface-2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-btn) !important;
+    color: var(--text) !important;
+    width: 100%;
+}
+
+.amount-input-large:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-glow) !important;
+    outline: none !important;
+}
+
+.amount-currency-affix {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    pointer-events: none;
+}
+
+.success-icon-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(74, 222, 158, 0.12);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem auto;
+}
+
+.success-icon-badge .material-symbols-rounded {
+    font-size: 32px;
+    color: var(--accent);
+}
+
+.operation-icon-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(74, 222, 158, 0.1);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem auto;
+}
+
+.operation-icon-badge .material-symbols-rounded {
+    font-size: 28px;
+    color: var(--accent);
+}
+
+.pin-change-input {
+    letter-spacing: 0.3em;
+    font-size: 1.35rem;
+}
+
+.history-empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.empty-state-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem auto;
+    color: var(--muted);
+}
+
+.empty-state-icon .material-symbols-rounded {
+    font-size: 28px;
+}
+
+.history-empty-state h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 0.35rem 0;
+}
+
+.history-empty-state p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Google Material Symbols */
+.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+    width: 100%;
+    max-width: 520px;
+    padding: 0 1rem;
+}
+
+.toast-notification {
+    pointer-events: auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius-btn);
+    background: var(--surface-2);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    border: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(-24px) scale(0.95);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-notification.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.toast-notification.hide {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+}
+
+.toast-error {
+    border-left: 4px solid var(--danger);
+}
+
+.toast-error .toast-icon {
+    color: var(--danger);
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.toast-success {
+    border-left: 4px solid var(--accent);
+}
+
+.toast-success .toast-icon {
+    color: var(--accent);
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.toast-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.toast-message {
+    line-height: 1.4;
+    color: var(--text);
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 4px;
+    transition: color 0.15s ease;
+}
+
+.toast-close:hover {
+    color: var(--text);
+}
+
+/* Auth Layout (1-login.png) */
+.auth-card {
+    max-width: 960px;
+    padding: 3rem 3.5rem;
+}
+
+.auth-layout {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 3.5rem;
+    align-items: start;
+}
+
+.auth-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-step-tag {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.auth-heading {
+    font-size: 2.35rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 1.25rem 0;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+
+.card-slot-wrap {
+    margin-bottom: 2rem;
+}
+
+.card-slot-glow {
+    width: 100%;
+    height: 12px;
+    background: #090B0E;
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-slot-glow), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.auth-subtext {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 0.85rem;
+    display: block;
+}
+
+.card-input-large {
+    font-family: var(--font-mono) !important;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.9rem 1.25rem;
+    border-radius: var(--radius-btn);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    margin-bottom: 1.25rem;
+}
+
+.card-inserted-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    padding: 1.1rem 1.25rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text);
+    text-align: center;
+}
+
+.demo-cards-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.demo-card-pill {
+    flex: 1;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 0.85rem;
+    color: var(--text);
+    font-size: 0.825rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.demo-card-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(74, 222, 158, 0.06);
+}
+
+.auth-col-pin {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-preview-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    user-select: none;
+}
+
+.pin-attempts-info {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-align: center;
+    display: block;
+    margin-top: 1rem;
+    line-height: 1.4;
+}
+
+.admin-entry-link-wrap {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.admin-login-link {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s ease;
+}
+
+.admin-login-link:hover {
+    color: var(--accent);
+}
+
+/* Admin Panel Styles (4-admin.png) */
+.admin-dashboard-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1160px;
+}
+
+/* 3 KPI картки (4-admin.png) */
+.admin-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.admin-kpi-card {
+    max-width: 100%;
+    padding: 1.75rem 2rem;
+}
+
+.admin-kpi-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.admin-kpi-value {
+    font-family: var(--font-mono);
+    font-size: 2.35rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+    margin: 0;
+}
+
+.admin-kpi-value.warning {
+    color: var(--warning);
+}
+
+/* Середній ряд: Касети та Observer (4-admin.png) */
+.admin-middle-row {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 1.5rem;
+}
+
+.admin-cassettes-card,
+.admin-observer-card {
+    max-width: 100%;
+    padding: 1.75rem 2rem;
+}
+
+.admin-panel-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 1.5rem 0;
+}
+
+.admin-cassettes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.cassette-item {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.cassette-denom {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    width: 60px;
+    color: var(--text);
+    flex-shrink: 0;
+}
+
+.cassette-bar-track {
+    flex: 1;
+    height: 8px;
+    background: #0E1116;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.cassette-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.3s ease;
+}
+
+.cassette-bar-fill.mint {
+    background: var(--accent);
+}
+
+.cassette-bar-fill.amber {
+    background: var(--warning);
+}
+
+.cassette-bar-fill.coral {
+    background: var(--danger);
+}
+
+.cassette-qty {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    width: 35px;
+    text-align: right;
+    color: var(--text);
+    flex-shrink: 0;
+}
+
+/* Observer Events (4-admin.png) */
+.observer-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.observer-event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.observer-event-desc {
+    font-size: 0.925rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.observer-event-val {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.observer-event-val.neg {
+    color: var(--text);
+}
+
+.observer-event-val.pos {
+    color: var(--accent);
+}
+
+.observer-event-badge {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--danger);
+    padding: 0 0.25rem;
+}
+
+/* Нижня таблиця акаунтів (4-admin.png) */
+.admin-table-card {
+    max-width: 100%;
+    padding: 1.75rem 2rem;
+}
+
+.admin-table-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.admin-search-wrap {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 420px;
+    flex: 1;
+}
+
+.admin-search-input {
+    min-height: 42px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.admin-search-btn,
+.admin-search-reset-btn {
+    min-height: 42px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+.admin-add-btn {
+    width: auto;
+    min-height: 42px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.admin-table-responsive {
+    overflow-x: auto;
+}
+
+.admin-login-card,
+.admin-form-card {
+    max-width: 480px;
+}
+
+.admin-dashboard-card {
+    max-width: 960px;
+    padding: 2.5rem;
+}
+
+.admin-icon-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(74, 222, 158, 0.1);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem auto;
+}
+
+.admin-icon-badge .material-symbols-rounded {
+    font-size: 28px;
+    color: var(--accent);
+}
+
+.admin-password-input {
+    letter-spacing: 0.25em;
+    font-size: 1.25rem;
+}
+
+.admin-dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.admin-dashboard-title-wrap h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text);
+}
+
+.admin-dashboard-subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0.35rem 0 0 0;
+}
+
+.admin-new-account-btn {
+    width: auto;
+    padding: 0.75rem 1.35rem;
+    white-space: nowrap;
+}
+
+.admin-search-bar {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+}
+
+.admin-search-input-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.admin-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.admin-search-input {
+    padding-left: 2.75rem;
+}
+
+.admin-search-btn,
+.admin-search-reset-btn {
+    width: auto;
+    padding: 0.75rem 1.25rem;
+    white-space: nowrap;
+}
+
+.admin-table-container {
+    overflow-x: auto;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+}
+
+.admin-accounts-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-accounts-table thead th {
+    padding: 1rem 1.25rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.admin-accounts-table tbody td {
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+.admin-accounts-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-accounts-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.account-client-name strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.account-card-number {
+    color: var(--muted);
+    letter-spacing: 0.08em;
+}
+
+.account-balance-cell {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.admin-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.admin-status-badge.active {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--accent);
+}
+
+.admin-status-badge.blocked {
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    color: var(--danger);
+}
+
+.btn-admin-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn-admin-action:hover {
+    background: #232c3a;
+    border-color: var(--border-strong);
+    color: var(--text);
+}
+
+.btn-admin-action.block {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn-admin-action.block:hover {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger);
+}
+
+.btn-admin-action.unblock {
+    background: var(--success-bg);
+    border-color: var(--success-border);
+    color: var(--accent);
+}
+
+.btn-admin-action.unblock:hover {
+    background: rgba(74, 222, 158, 0.2);
+}
+
+.admin-empty-table-cell {
+    text-align: center;
+    padding: 2.5rem !important;
+    color: var(--muted);
+}
+
+.pin-change-card {
+    max-width: 480px;
+}
+
+.hidden-pin-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Standalone Utility Classes (eliminating Bootstrap CDN) */
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.d-block { display: block !important; }
+.d-inline { display: inline !important; }
+.d-flex { display: flex !important; }
+.w-100 { width: 100% !important; }
+.justify-content-center { justify-content: center !important; }
+
+/* Адаптивність (Mobile / Desktop) */
+@media (max-width: 992px) {
+    .menu-dashboard {
+        grid-template-columns: 1fr;
     }
 
-.page-info {
-    color: #888;
-    font-size: 0.9rem;
+    .auth-layout {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .auth-card {
+        padding: 2.5rem 2rem;
+    }
+
+    .withdraw-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-middle-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .atm-topbar {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-kpi-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .atm-main-content {
+        padding: 1rem 0.75rem 2.5rem 0.75rem;
+    }
+
+    .atm-card,
+    .bank-card,
+    .balance-box,
+    .recent-ops-card,
+    .withdraw-form-card,
+    .withdraw-calc-card,
+    .admin-kpi-card,
+    .admin-cassettes-card,
+    .admin-observer-card,
+    .admin-table-card {
+        padding: 1.35rem 1rem !important;
+    }
+
+    .bank-card-number-mid {
+        font-size: 1.05rem;
+        letter-spacing: 0.04em;
+    }
+
+    .step-indicator {
+        max-width: 100%;
+        overflow-x: auto;
+        padding: 3px;
+        gap: 0.2rem;
+    }
+
+    .step-pill {
+        padding: 0.3rem 0.55rem;
+        font-size: 0.72rem;
+    }
+
+    .demo-cards-row {
+        flex-direction: column;
+    }
+
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-amounts {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .withdraw-presets-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-search-wrap {
+        max-width: 100%;
+        flex-direction: column;
+    }
+
+    .admin-table-header-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-add-btn {
+        width: 100%;
+    }
 }

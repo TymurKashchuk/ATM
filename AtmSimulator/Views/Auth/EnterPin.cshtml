@@ -1,37 +1,144 @@
-﻿@model AtmSimulator.ViewModels.PinViewModel
+@model AtmSimulator.ViewModels.PinViewModel
 
 @{
-    ViewData["Title"] = "Enter PIN";
+    ViewData["Title"] = "Введення PIN";
+    var cardNumber = Context.Session.GetString("CardNumber") ?? "";
+    string formattedCard = cardNumber;
+    if (cardNumber.Length == 16)
+    {
+        formattedCard = $"{cardNumber[..4]} {cardNumber[4..8]} {cardNumber[8..12]} {cardNumber[12..]}";
+    }
 }
 
 <div class="atm-screen">
-    <div class="atm-card">
-        <div class="atm-header">
-            <h1>Enter PIN</h1>
-            <p class="text-muted">Enter your 4-digit PIN</p>
-        </div>
+    <div class="atm-card auth-card">
+        <div class="auth-layout">
+            <!-- Крок 1: Картка вже введена -->
+            <div class="auth-col">
+                <span class="auth-step-tag">Крок 1 · картка</span>
+                <h1 class="auth-heading">Картку вставлено</h1>
 
-        <form action="/Auth/EnterPin" method="post">
-            @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label asp-for="Pin" class="form-label">PIN</label>
-                <input asp-for="Pin"
-                       class="form-control text-center"
-                       type="password"
-                       placeholder="••••"
-                       maxlength="4" />
-                <span asp-validation-for="Pin" class="text-danger"></span>
+                <div class="card-slot-wrap">
+                    <div class="card-slot-glow"></div>
+                </div>
+
+                <div class="auth-subtext">Номер активної картки</div>
+                <div class="card-inserted-box font-mono">
+                    @formattedCard
+                </div>
+
+                <div class="mt-4">
+                    <a asp-action="InsertCard" class="btn-atm-outline">
+                        Змінити картку
+                    </a>
+                </div>
+
+                <div class="admin-entry-link-wrap">
+                    <a href="/Admin/Login" class="admin-login-link">
+                        <span class="material-symbols-rounded">admin_panel_settings</span>
+                        <span>Панель адміністратора</span>
+                    </a>
+                </div>
             </div>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
+            <!-- Крок 2: Активне введення PIN-коду -->
+            <div class="auth-col auth-col-pin">
+                <span class="auth-step-tag">Крок 2 · PIN-код</span>
 
-            <button type="submit" class="btn-atm mt-4">
-                Confirm →
-            </button>
+                <form id="pin-form" action="/Auth/EnterPin" method="post">
+                    @Html.AntiForgeryToken()
 
-            <a asp-action="InsertCard" class="btn-atm-outline mt-2">
-                ← Cancel
-            </a>
-        </form>
+                    <!-- Прихований інпут для PIN-значення -->
+                    <input asp-for="Pin"
+                           id="pin-input"
+                           type="password"
+                           maxlength="4"
+                           class="hidden-pin-input" />
+
+                    <!-- 4 Індикатори-точки -->
+                    <div class="pin-dots-container">
+                        <div id="dot-0" class="pin-dot"></div>
+                        <div id="dot-1" class="pin-dot"></div>
+                        <div id="dot-2" class="pin-dot"></div>
+                        <div id="dot-3" class="pin-dot"></div>
+                    </div>
+
+                    <!-- 3x4 PIN-пад -->
+                    <div class="pin-pad-grid">
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('1')"><span>1</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('2')"><span>2</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('3')"><span>3</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('4')"><span>4</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('5')"><span>5</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('6')"><span>6</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('7')"><span>7</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('8')"><span>8</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('9')"><span>9</span></button>
+                        <button type="button" class="pin-pad-btn action-clear" onclick="backspacePin()" title="Стерти символ"><span>⌫</span></button>
+                        <button type="button" class="pin-pad-btn" onclick="addPinDigit('0')"><span>0</span></button>
+                        <button type="button" class="pin-pad-btn action-clear" onclick="clearPinAll()" title="Очистити все"><span>C</span></button>
+                    </div>
+
+                    <button type="submit" class="btn-atm">
+                        Підтвердити PIN
+                    </button>
+                </form>
+
+                <span class="pin-attempts-info">
+                    Залишилось спроб: 3 · після цього картку буде заблоковано
+                </span>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const pinInput = document.getElementById('pin-input');
+        const form = document.getElementById('pin-form');
+
+        function updateDots() {
+            const len = pinInput.value.length;
+            for (let i = 0; i < 4; i++) {
+                const dot = document.getElementById('dot-' + i);
+                if (dot) {
+                    dot.classList.toggle('filled', i < len);
+                }
+            }
+        }
+
+        function addPinDigit(digit) {
+            if (pinInput.value.length < 4) {
+                pinInput.value += digit;
+                updateDots();
+                if (pinInput.value.length === 4) {
+                    setTimeout(() => form.submit(), 250);
+                }
+            }
+        }
+
+        function backspacePin() {
+            if (pinInput.value.length > 0) {
+                pinInput.value = pinInput.value.slice(0, -1);
+                updateDots();
+            }
+        }
+
+        function clearPinAll() {
+            pinInput.value = '';
+            updateDots();
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key >= '0' && e.key <= '9') {
+                addPinDigit(e.key);
+            } else if (e.key === 'Backspace') {
+                backspacePin();
+            } else if (e.key === 'Escape') {
+                clearPinAll();
+            } else if (e.key === 'Enter') {
+                if (pinInput.value.length === 4) form.submit();
+            }
+        });
+    </script>
+}

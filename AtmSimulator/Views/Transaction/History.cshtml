@@ -1,54 +1,110 @@
 @model AtmSimulator.ViewModels.TransactionHistoryViewModel
 
 @{
-    ViewData["Title"] = "Transaction History";
+    ViewData["Title"] = "Історія операцій";
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 600px;">
+    <div class="atm-card history-card">
         <div class="atm-header">
-            <h1>Історія транзакцій</h1>
-            <p class="text-muted">Всього операцій: @Model.TotalCount</p>
+            <h1>Історія операцій</h1>
+            <p>Усього операцій за карткою: @Model.TotalCount</p>
         </div>
 
         @if (!Model.Transactions.Any())
         {
-            <div class="empty-state">
-                <p>Транзакцій ще немає</p>
+            <div class="history-empty-state">
+                <div class="empty-state-icon">
+                    <span class="material-symbols-rounded">receipt_long</span>
+                </div>
+                <h3>Транзакцій поки немає</h3>
+                <p>Усі виконані операції будуть відображатися тут</p>
             </div>
         }
         else
         {
+            <!-- Верхній тулбар пагінації -->
+            <div class="history-toolbar">
+                <span class="history-summary">
+                    Показано @(Math.Min((Model.CurrentPage - 1) * 10 + 1, Model.TotalCount))–@(Math.Min(Model.CurrentPage * 10, Model.TotalCount)) з @Model.TotalCount
+                </span>
+                @if (Model.TotalPages > 1)
+                {
+                    <div class="pagination-compact">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <a asp-action="History" asp-route-page="@(Model.CurrentPage - 1)" class="page-btn-sm" title="Попередня сторінка">
+                                <span class="material-symbols-rounded">chevron_left</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-btn-sm disabled">
+                                <span class="material-symbols-rounded">chevron_left</span>
+                            </span>
+                        }
+
+                        <span class="page-badge font-mono">@Model.CurrentPage / @Model.TotalPages</span>
+
+                        @if (Model.CurrentPage < Model.TotalPages)
+                        {
+                            <a asp-action="History" asp-route-page="@(Model.CurrentPage + 1)" class="page-btn-sm" title="Наступна сторінка">
+                                <span class="material-symbols-rounded">chevron_right</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-btn-sm disabled">
+                                <span class="material-symbols-rounded">chevron_right</span>
+                            </span>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Список транзакцій -->
             <div class="transaction-list">
                 @foreach (var t in Model.Transactions)
                 {
-                    <div class="transaction-item" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                        <div style="display:flex; align-items:center; gap:0.75rem;">
-                            <div class="transaction-icon @t.Type.ToString().ToLower()">
+                    var isPositive = t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"));
+
+                    <div class="transaction-item">
+                        <div class="transaction-icon @t.Type.ToString().ToLower()">
+                            @switch (t.Type)
+                            {
+                                case AtmSimulator.Models.TransactionType.Withdrawal:
+                                    <span class="material-symbols-rounded">payments</span>
+                                    break;
+                                case AtmSimulator.Models.TransactionType.Deposit:
+                                    <span class="material-symbols-rounded">arrow_downward</span>
+                                    break;
+                                case AtmSimulator.Models.TransactionType.Transfer:
+                                    <span class="material-symbols-rounded">swap_horiz</span>
+                                    break;
+                            }
+                        </div>
+                        <div class="transaction-info">
+                            <h4 class="transaction-type">
                                 @switch (t.Type)
                                 {
                                     case AtmSimulator.Models.TransactionType.Withdrawal:
-                                        <span>↑</span>
+                                        <span>Зняття готівки</span>
                                         break;
                                     case AtmSimulator.Models.TransactionType.Deposit:
-                                        <span>↓</span>
+                                        <span>Поповнення рахунку</span>
                                         break;
                                     case AtmSimulator.Models.TransactionType.Transfer:
-                                        <span>⇄</span>
+                                        <span>Грошовий переказ</span>
                                         break;
                                 }
-                            </div>
-                            <div class="transaction-info">
-                                <p class="transaction-type">@t.Type</p>
-                                <p class="transaction-date">@t.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
-                            </div>
+                            </h4>
+                            <p class="transaction-date font-mono">@t.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
                         </div>
-
-                        <div style="display:flex; align-items:center; gap:0.75rem;">
-                            <div class="transaction-amount @((t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"))) ? "positive" : "negative")">
-                                @((t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"))) ? "+" : "-")@t.Amount.ToString("N2") ₴
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="transaction-amount font-mono @(isPositive ? "positive" : "negative")">
+                                @(isPositive ? "+" : "-")@t.Amount.ToString("N2") ₴
                             </div>
-                            <a asp-action="Receipt" asp-route-id="@t.Id" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem; padding:0.25rem 0.6rem; color:#94a3b8; border-color:#334e68; text-decoration:none; border-radius:4px;">
+                            <a asp-action="Receipt" asp-route-id="@t.Id" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem; padding:0.25rem 0.6rem; color:#94a3b8; border-color:rgba(255,255,255,0.15); text-decoration:none; border-radius:6px;">
                                 Чек 📄
                             </a>
                         </div>
@@ -61,17 +117,51 @@
                 <div class="pagination">
                     @if (Model.CurrentPage > 1)
                     {
-                        <a asp-action="History" asp-route-page="@(Model.CurrentPage - 1)" class="page-btn">←</a>
+                        <a asp-action="History" asp-route-page="@(Model.CurrentPage - 1)" class="page-btn" title="Попередня сторінка">
+                            <span class="material-symbols-rounded">chevron_left</span>
+                        </a>
                     }
-                    <span class="page-info">@Model.CurrentPage / @Model.TotalPages</span>
+                    else
+                    {
+                        <span class="page-btn disabled">
+                            <span class="material-symbols-rounded">chevron_left</span>
+                        </span>
+                    }
+
+                    @for (int p = 1; p <= Model.TotalPages; p++)
+                    {
+                        if (p == Model.CurrentPage)
+                        {
+                            <span class="page-num active">@p</span>
+                        }
+                        else if (p <= 3 || p > Model.TotalPages - 2 || Math.Abs(p - Model.CurrentPage) <= 1)
+                        {
+                            <a asp-action="History" asp-route-page="@p" class="page-num">@p</a>
+                        }
+                        else if (p == 4 || p == Model.TotalPages - 2)
+                        {
+                            <span class="page-dots">…</span>
+                        }
+                    }
+
                     @if (Model.CurrentPage < Model.TotalPages)
                     {
-                        <a asp-action="History" asp-route-page="@(Model.CurrentPage + 1)" class="page-btn">→</a>
+                        <a asp-action="History" asp-route-page="@(Model.CurrentPage + 1)" class="page-btn" title="Наступна сторінка">
+                            <span class="material-symbols-rounded">chevron_right</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-btn disabled">
+                            <span class="material-symbols-rounded">chevron_right</span>
+                        </span>
                     }
                 </div>
             }
         }
 
-        <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-3">← Назад</a>
+        <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-3">
+            Повернутися в головне меню
+        </a>
     </div>
 </div>
