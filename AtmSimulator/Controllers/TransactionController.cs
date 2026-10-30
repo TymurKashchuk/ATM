@@ -1,7 +1,8 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Services;
 using AtmSimulator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AtmSimulator.Controllers
 {
@@ -12,15 +13,21 @@ namespace AtmSimulator.Controllers
         private readonly DepositService _depositService;
         private readonly TransferService _transferService;
         private readonly TransactionService _transactionService;
+        private readonly ReceiptService _receiptService;
 
-        public TransactionController(AppDbContext context, WithdrawalService withdrawalService, DepositService depositService,
-            TransferService transferService, TransactionService transactionService)
+        public TransactionController(AppDbContext context,
+            WithdrawalService withdrawalService,
+            DepositService depositService,
+            TransferService transferService,
+            TransactionService transactionService,
+            ReceiptService receiptService)
         {
             _context = context;
             _withdrawalService = withdrawalService;
             _depositService = depositService;
             _transferService = transferService;
             _transactionService = transactionService;
+            _receiptService = receiptService;
         }
 
         public async Task<IActionResult> Withdraw()
@@ -28,7 +35,13 @@ namespace AtmSimulator.Controllers
             var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
-            return View(new WithdrawalViewModel { CurrentBalance = account!.Balance });
+            var remainingLimit = await _withdrawalService.GetRemainingDailyLimitAsync(accountId);
+
+            return View(new WithdrawalViewModel
+            {
+                CurrentBalance = account!.Balance,
+                RemainingDailyLimit = remainingLimit
+            });
         }
 
         [HttpPost]
@@ -38,6 +51,7 @@ namespace AtmSimulator.Controllers
 
             var account = await _context.Accounts.FindAsync(accountId);
             model.CurrentBalance = account!.Balance;
+            model.RemainingDailyLimit = await _withdrawalService.GetRemainingDailyLimitAsync(accountId);
 
             if (!ModelState.IsValid) return View(model);
 
@@ -46,8 +60,14 @@ namespace AtmSimulator.Controllers
                 var dispensed = await _withdrawalService.WithdrawAsync(accountId, model.Amount);
                 await _context.Entry(account).ReloadAsync();
 
+                var lastTx = await _context.Transactions
+                    .Where(t => t.AccountId == accountId)
+                    .OrderByDescending(t => t.Id)
+                    .FirstOrDefaultAsync();
+
                 model.DispensedCash = dispensed;
                 model.CurrentBalance = account.Balance;
+                model.TransactionId = lastTx?.Id;
 
                 return View("WithdrawSuccess", model);
             }
@@ -62,7 +82,19 @@ namespace AtmSimulator.Controllers
             var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
-            return View(new DepositViewModel { CurrentBalance = account!.Balance });
+            var denominations = await _depositService.GetSupportedDenominationsAsync();
+
+            var viewModel = new DepositViewModel
+            {
+                CurrentBalance = account!.Balance,
+                Banknotes = denominations.Select(d => new BanknoteDepositItem
+                {
+                    Denomination = d,
+                    Count = 0
+                }).ToList()
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -73,14 +105,33 @@ namespace AtmSimulator.Controllers
             var account = await _context.Accounts.FindAsync(accountId);
             model.CurrentBalance = account!.Balance;
 
+            var banknotesDict = model.Banknotes?
+                .Where(b => b.Count > 0)
+                .ToDictionary(b => b.Denomination, b => b.Count) ?? new Dictionary<int, int>();
+
+            if (!banknotesDict.Any())
+            {
+                ModelState.AddModelError("", "Будь ласка, вкажіть кількість хоча б однієї купюри для поповнення");
+                return View(model);
+            }
+
             if (!ModelState.IsValid) return View(model);
 
             try
             {
-                await _depositService.DepositAsync(accountId, model.Amount);
+                var depositedAmount = await _depositService.DepositAsync(accountId, banknotesDict);
                 await _context.Entry(account).ReloadAsync();
 
-                TempData["Success"] = $"Успішно внесено {model.Amount:N2} ₴";
+                var lastTx = await _context.Transactions
+                    .Where(t => t.AccountId == accountId)
+                    .OrderByDescending(t => t.Id)
+                    .FirstOrDefaultAsync();
+
+                TempData["Success"] = $"Успішно внесено {depositedAmount:N2} ₴";
+                if (lastTx != null)
+                {
+                    return RedirectToAction(nameof(Receipt), new { id = lastTx.Id });
+                }
                 return RedirectToAction("Index", "Account");
             }
             catch (InvalidOperationException ex)
@@ -94,7 +145,13 @@ namespace AtmSimulator.Controllers
             var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
-            return View(new TransferViewModel { CurrentBalance = account!.Balance });
+            var card = await _context.Cards.FirstOrDefaultAsync(c => c.AccountId == accountId);
+
+            return View(new TransferViewModel
+            {
+                CurrentBalance = account!.Balance,
+                SenderCardNumber = card?.CardNumber ?? ""
+            });
         }
 
         [HttpPost]
@@ -103,7 +160,10 @@ namespace AtmSimulator.Controllers
             var accountId = (int)HttpContext.Session.GetInt32("AccountId")!;
 
             var account = await _context.Accounts.FindAsync(accountId);
+            var card = await _context.Cards.FirstOrDefaultAsync(c => c.AccountId == accountId);
+
             model.CurrentBalance = account!.Balance;
+            model.SenderCardNumber = card?.CardNumber ?? "";
 
             if (!ModelState.IsValid) return View(model);
 
@@ -112,12 +172,44 @@ namespace AtmSimulator.Controllers
                 await _transferService.TransferAsync(accountId, model.RecipientCardNumber, model.Amount);
                 await _context.Entry(account).ReloadAsync();
 
+                var lastTx = await _context.Transactions
+                    .Where(t => t.AccountId == accountId)
+                    .OrderByDescending(t => t.Id)
+                    .FirstOrDefaultAsync();
+
                 TempData["Success"] = $"Успішно переведено {model.Amount:N2} ₴";
+                if (lastTx != null)
+                {
+                    return RedirectToAction(nameof(Receipt), new { id = lastTx.Id });
+                }
                 return RedirectToAction("Index", "Account");
             }
             catch (InvalidOperationException ex)
             {
                 return this.InvalidOpAsModelError(ex, model);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Receipt(int id)
+        {
+            var accountId = HttpContext.Session.GetInt32("AccountId");
+            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+
+            try
+            {
+                var receipt = await _receiptService.GenerateReceiptAsync(id);
+                var tx = await _context.Transactions.FindAsync(id);
+                if (tx == null || tx.AccountId != accountId.Value)
+                {
+                    return RedirectToAction("Index", "Account");
+                }
+
+                return View(receipt);
+            }
+            catch (InvalidOperationException)
+            {
+                return RedirectToAction("Index", "Account");
             }
         }
 

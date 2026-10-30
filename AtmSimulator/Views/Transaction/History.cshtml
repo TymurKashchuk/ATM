@@ -62,7 +62,7 @@
                 }
             </div>
 
-            <!-- Список транзакцій зі стильним темним скролом -->
+            <!-- Список транзакцій -->
             <div class="transaction-list">
                 @foreach (var t in Model.Transactions)
                 {
@@ -100,8 +100,13 @@
                             </h4>
                             <p class="transaction-date font-mono">@t.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
                         </div>
-                        <div class="transaction-amount font-mono @(isPositive ? "positive" : "negative")">
-                            @(isPositive ? "+" : "-")@t.Amount.ToString("N2") ₴
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="transaction-amount font-mono @(isPositive ? "positive" : "negative")">
+                                @(isPositive ? "+" : "-")@t.Amount.ToString("N2") ₴
+                            </div>
+                            <a asp-action="Receipt" asp-route-id="@t.Id" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem; padding:0.25rem 0.6rem; color:#94a3b8; border-color:rgba(255,255,255,0.15); text-decoration:none; border-radius:6px;">
+                                Чек 📄
+                            </a>
                         </div>
                     </div>
                 }

@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Filters;
+using AtmSimulator.Filters;
 using AtmSimulator.Services;
 using AtmSimulator.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -16,12 +16,9 @@ namespace AtmSimulator.Controllers
             _configuration = configuration;
         }
 
-
         [AdminAuthorize]
         public async Task<IActionResult> Index(string? search)
         {
-            
-
             var accounts = await _adminService.GetAccountsAsync(search);
 
             var viewModel = new AdminAccountListViewModel
@@ -41,6 +38,7 @@ namespace AtmSimulator.Controllers
             TempData["Success"] = "Статус картки змінено";
             return RedirectToAction("Index");
         }
+
         [AdminAuthorize]
         public IActionResult Create()
         {
@@ -51,7 +49,6 @@ namespace AtmSimulator.Controllers
         [AdminAuthorize]
         public async Task<IActionResult> Create(CreateAccountViewModel model)
         {
-
             if (!ModelState.IsValid) return View(model);
 
             try
@@ -65,6 +62,48 @@ namespace AtmSimulator.Controllers
                 ModelState.AddModelError("", ex.Message);
                 return View(model);
             }
+        }
+
+        [HttpGet]
+        [AdminAuthorize]
+        public async Task<IActionResult> CashStorage()
+        {
+            var viewModel = await _adminService.GetCashStorageDetailsAsync();
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [AdminAuthorize]
+        public async Task<IActionResult> RefillCash(int denomination, int count)
+        {
+            try
+            {
+                await _adminService.RefillCassetteAsync(denomination, count);
+                TempData["Success"] = $"Касету {denomination} ₴ успішно поповнено на {count} купюр";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(CashStorage));
+        }
+
+        [HttpPost]
+        [AdminAuthorize]
+        public async Task<IActionResult> WithdrawCash(int denomination, int count)
+        {
+            try
+            {
+                await _adminService.WithdrawCassetteAsync(denomination, count);
+                TempData["Success"] = $"Інкасовано {count} купюр номіналом {denomination} ₴ (на суму {denomination * count:N2} ₴)";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(CashStorage));
         }
 
         [HttpGet]

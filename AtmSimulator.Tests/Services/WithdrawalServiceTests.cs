@@ -35,7 +35,7 @@ namespace AtmSimulator.Tests.Services
         }
 
         [Fact]
-        public async Task Withdraw_SufficientBalance_DeductsAmount()
+        public async Task Withdraw_SufficientBalance_DeductsAmountAndFee()
         {
             var db = CreateDb();
             db.Accounts.Add(new Account { Id = 1, Balance = 1000m });
@@ -44,7 +44,8 @@ namespace AtmSimulator.Tests.Services
             var service = CreateService(db);
             await service.WithdrawAsync(1, 500m);
 
-            db.Accounts.Find(1)!.Balance.Should().Be(500m);
+            // 1000m - 500m (сума) - 5m (комісія 1%) = 495m
+            db.Accounts.Find(1)!.Balance.Should().Be(495m);
         }
 
         [Fact]
@@ -137,6 +138,61 @@ namespace AtmSimulator.Tests.Services
                 t.AccountId == 1 &&
                 t.Type == TransactionType.Withdrawal &&
                 t.Amount == 200m)), Times.Once);
+        }
+
+        [Fact]
+        public async Task Withdraw_ExceedingDailyLimit_ThrowsException()
+        {
+            var db = CreateDb();
+            db.Accounts.Add(new Account { Id = 1, Balance = 30000m });
+            db.Transactions.Add(new Transaction
+            {
+                AccountId = 1,
+                Type = TransactionType.Withdrawal,
+                Amount = 19000m,
+                CreatedAt = DateTime.UtcNow
+            });
+            await db.SaveChangesAsync();
+
+            var service = CreateService(db);
+            var act = async () => await service.WithdrawAsync(1, 1200m); // 19000 + 1200 = 20200 > 20000
+
+            await act.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("*Перевищено добовий ліміт зняття*");
+        }
+
+        [Fact]
+        public async Task Withdraw_ExceedingMaxBanknotesLimit_ThrowsException()
+        {
+            var db = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options);
+
+            // Лише 20-ки: для 1000 грн потрібно 50 купюр (> 40)
+            db.CashStorage.Add(new CashStorage { Denomination = 20, Count = 100 });
+            db.Accounts.Add(new Account { Id = 1, Balance = 5000m });
+            await db.SaveChangesAsync();
+
+            var service = CreateService(db);
+            var act = async () => await service.WithdrawAsync(1, 1000m);
+
+            await act.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("*Перевищено ліміт кількості купюр*");
+        }
+
+        [Fact]
+        public async Task Withdraw_InsufficientBalanceForFee_ThrowsException()
+        {
+            var db = CreateDb();
+            db.Accounts.Add(new Account { Id = 1, Balance = 500m });
+            await db.SaveChangesAsync();
+
+            var service = CreateService(db);
+            // Сума 500 + 5 (комісія) = 505 > 500
+            var act = async () => await service.WithdrawAsync(1, 500m);
+
+            await act.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("*Недостатньо коштів з урахуванням комісії*");
         }
     }
 }

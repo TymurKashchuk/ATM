@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AtmSimulator.Services;
 
 namespace AtmSimulator.ViewModels
 {
@@ -15,10 +16,12 @@ namespace AtmSimulator.ViewModels
         }
 
         [Required(ErrorMessage = "Введіть суму")]
-        [Range(1, 50000, ErrorMessage = "Сума має бути від 1 до 50 000")]
+        [Range(1, 50000, ErrorMessage = "Сума має бути від 1 до 50 000 ₴")]
         public decimal Amount { get; set; }
 
         public decimal CurrentBalance { get; set; }
         public string? RecipientName { get; set; }
+        public string SenderCardNumber { get; set; } = string.Empty;
+        public decimal ExternalFeePercent { get; set; } = TransferService.ExternalTransferFeePercent;
     }
 }

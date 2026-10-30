@@ -82,5 +82,56 @@ namespace AtmSimulator.Services
             _context.Cards.Add(card);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<CashStorageViewModel> GetCashStorageDetailsAsync()
+        {
+            var cassettes = await _context.CashStorage
+                .OrderByDescending(c => c.Denomination)
+                .Select(c => new CashCassetteItemViewModel
+                {
+                    Id = c.Id,
+                    Denomination = c.Denomination,
+                    Count = c.Count
+                })
+                .ToListAsync();
+
+            return new CashStorageViewModel
+            {
+                Cassettes = cassettes
+            };
+        }
+
+        public async Task RefillCassetteAsync(int denomination, int count)
+        {
+            if (count <= 0)
+                throw new InvalidOperationException("Кількість купюр для поповнення має бути більшою за 0");
+
+            var cassette = await _context.CashStorage
+                .FirstOrDefaultAsync(c => c.Denomination == denomination);
+
+            if (cassette == null)
+                throw new InvalidOperationException($"Касету з номіналом {denomination} ₴ не знайдено");
+
+            cassette.Count += count;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task WithdrawCassetteAsync(int denomination, int count)
+        {
+            if (count <= 0)
+                throw new InvalidOperationException("Кількість купюр для вилучення має бути більшою за 0");
+
+            var cassette = await _context.CashStorage
+                .FirstOrDefaultAsync(c => c.Denomination == denomination);
+
+            if (cassette == null)
+                throw new InvalidOperationException($"Касету з номіналом {denomination} ₴ не знайдено");
+
+            if (count > cassette.Count)
+                throw new InvalidOperationException($"Неможливо вилучити {count} купюр. У касеті залишилось лише {cassette.Count}");
+
+            cassette.Count -= count;
+            await _context.SaveChangesAsync();
+        }
     }
 }

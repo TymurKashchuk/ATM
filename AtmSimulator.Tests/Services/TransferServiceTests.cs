@@ -1,4 +1,4 @@
-﻿using AtmSimulator.Data;
+using AtmSimulator.Data;
 using AtmSimulator.Models;
 using AtmSimulator.Services;
 using FluentAssertions;
@@ -97,6 +97,42 @@ namespace AtmSimulator.Tests.Services
 
             await act.Should().ThrowAsync<InvalidOperationException>()
                      .WithMessage("*не знайдено*");
+        }
+
+        [Fact]
+        public async Task Transfer_ToExternalCard_DeductsFeeFromSender()
+        {
+            var db = CreateDb();
+            // Стороння картка (інший BIN - 987654 замість 123456)
+            db.Accounts.Add(new Account { Id = 3, Balance = 100m });
+            db.Cards.Add(new Card { Id = 3, CardNumber = "9876543210987654", AccountId = 3 });
+            await db.SaveChangesAsync();
+
+            var service = new TransferService(db);
+            // Переказ 500 ₴. Комісія 2% = 10 ₴. Списання з відправника = 510 ₴.
+            await service.TransferAsync(1, "9876543210987654", 500m);
+
+            db.Accounts.Find(1)!.Balance.Should().Be(490m); // 1000 - 500 - 10
+            db.Accounts.Find(3)!.Balance.Should().Be(600m); // 100 + 500
+
+            var senderTx = db.Transactions.FirstOrDefault(t => t.AccountId == 1 && t.Description!.Contains("Комісія 2%"));
+            senderTx.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Transfer_ToExternalCard_InsufficientBalanceForFee_ThrowsException()
+        {
+            var db = CreateDb();
+            db.Accounts.Add(new Account { Id = 3, Balance = 100m });
+            db.Cards.Add(new Card { Id = 3, CardNumber = "9876543210987654", AccountId = 3 });
+            await db.SaveChangesAsync();
+
+            var service = new TransferService(db);
+            // Баланс 1 = 1000. Переказ 1000. Комісія 2% = 20. Разом 1020 > 1000
+            var act = async () => await service.TransferAsync(1, "9876543210987654", 1000m);
+
+            await act.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("*Недостатньо коштів з урахуванням комісії*");
         }
     }
 }

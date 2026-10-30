@@ -46,7 +46,14 @@
             </div>
         </div>
 
-        <a asp-controller="Account" asp-action="Index" class="btn-atm">
+        @if (Model.TransactionId.HasValue)
+        {
+            <a asp-action="Receipt" asp-route-id="@Model.TransactionId.Value" class="btn-atm mb-2" style="background:#0284c7;">
+                📄 Роздрукувати / Завантажити чек (PDF)
+            </a>
+        }
+
+        <a asp-controller="Account" asp-action="Index" class="btn-atm-outline">
             Повернутися в головне меню
         </a>
     </div>

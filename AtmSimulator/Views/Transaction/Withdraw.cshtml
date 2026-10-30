@@ -13,6 +13,21 @@
                 <span class="withdraw-subtext">Сума зняття · баланс @currentBal.ToString("N2") ₴</span>
             </div>
 
+            <!-- Добовий ліміт та інформація про комісію -->
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 0.6rem 0.85rem; margin-bottom: 1rem; font-size: 0.8rem;">
+                <div style="display:flex; justify-content:space-between; color:#94a3b8;">
+                    <span>Добовий ліміт:</span>
+                    <strong style="color:#f8fafc;">@Model.DailyLimit.ToString("N0") ₴</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; color:#94a3b8; margin-top:0.2rem;">
+                    <span>Залишок на сьогодні:</span>
+                    <strong style="color:#60a5fa;">@Model.RemainingDailyLimit.ToString("N2") ₴</strong>
+                </div>
+                <div style="color:#94a3b8; font-size:0.75rem; margin-top:0.35rem; border-top:1px solid rgba(255,255,255,0.06); padding-top:0.25rem;">
+                    Комісія: <strong style="color:#fcd34d">1%</strong> · Максимум <strong style="color:#fcd34d">40 банкнот</strong>
+                </div>
+            </div>
+
             <form asp-action="Withdraw" method="post" id="withdraw-form">
                 @Html.AntiForgeryToken()
 
@@ -22,7 +37,7 @@
                            type="number"
                            step="20"
                            min="20"
-                           value="@(Model.Amount > 0 ? Model.Amount.ToString("0.##") : "1300")"
+                           value="@(Model.Amount > 0 ? Model.Amount.ToString("0.##") : "1000")"
                            class="form-control withdraw-amount-field font-mono"
                            placeholder="0"
                            autofocus />
@@ -30,12 +45,14 @@
                 </div>
                 <span asp-validation-for="Amount" class="text-danger mb-2 d-block"></span>
 
-                <!-- Пресети сум -->
-                <div class="withdraw-presets-row">
+                <!-- Пресети сум (Швидкі суми) -->
+                <div class="withdraw-presets-row" style="grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin-bottom: 1rem;">
+                    <button type="button" class="withdraw-preset-btn font-mono" onclick="setPreset(100)">100</button>
                     <button type="button" class="withdraw-preset-btn font-mono" onclick="setPreset(200)">200</button>
                     <button type="button" class="withdraw-preset-btn font-mono" onclick="setPreset(500)">500</button>
                     <button type="button" class="withdraw-preset-btn font-mono" onclick="setPreset(1000)">1 000</button>
                     <button type="button" class="withdraw-preset-btn font-mono" onclick="setPreset(2000)">2 000</button>
+                    <button type="button" class="withdraw-preset-btn font-mono" onclick="setPreset(5000)">5 000</button>
                 </div>
 
                 <!-- Як видати купюри -->
@@ -44,7 +61,7 @@
                     <div class="dispense-options-list">
                         <div class="dispense-option-card active" id="opt-min" onclick="selectStrategy('min')">
                             <span class="dispense-opt-title">Мінімум купюр</span>
-                            <span class="dispense-opt-desc">Алгоритм підбирає найменшу кількість</span>
+                            <span class="dispense-opt-desc">Алгоритм підбирає найбільші номінали</span>
                         </div>
                         <div class="dispense-option-card" id="opt-small" onclick="selectStrategy('small')">
                             <span class="dispense-opt-title">Дрібні купюри</span>
@@ -53,8 +70,10 @@
                     </div>
                 </div>
 
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
                 <button type="submit" class="btn-atm withdraw-submit-btn">
-                    Отримати готівку
+                    Отримати готівку →
                 </button>
                 <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-2">
                     Повернутися в меню
@@ -67,38 +86,27 @@
             <h4 class="calc-card-title">Попередній розрахунок видачі</h4>
 
             <div class="calc-breakdown-list" id="calc-breakdown-list">
-                <!-- Динамічно заповнюється скриптом або дефолт 1300 ₴ -->
-                <div class="calc-row">
-                    <div class="calc-denom-col">
-                        <span class="calc-swatch blue"></span>
-                        <span class="calc-denom-text font-mono">500 ₴ &nbsp;× 2</span>
-                    </div>
-                    <span class="calc-row-total font-mono">1 000 ₴</span>
-                </div>
-                <div class="calc-row">
-                    <div class="calc-denom-col">
-                        <span class="calc-swatch peach"></span>
-                        <span class="calc-denom-text font-mono">200 ₴ &nbsp;× 1</span>
-                    </div>
-                    <span class="calc-row-total font-mono">200 ₴</span>
-                </div>
-                <div class="calc-row">
-                    <div class="calc-denom-col">
-                        <span class="calc-swatch purple"></span>
-                        <span class="calc-denom-text font-mono">100 ₴ &nbsp;× 1</span>
-                    </div>
-                    <span class="calc-row-total font-mono">100 ₴</span>
-                </div>
+                <!-- Динамічно заповнюється скриптом -->
             </div>
 
             <div class="calc-footer-divider"></div>
 
-            <div class="calc-remaining-row">
-                <span class="calc-remaining-label">Залишок після операції</span>
-                <span class="calc-remaining-val font-mono" id="calc-remaining-val">@(Math.Max(0, currentBal - 1300).ToString("N2")) ₴</span>
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#94a3b8; margin-bottom:0.35rem;">
+                <span>Комісія банкомату (1%):</span>
+                <span class="font-mono" id="calc-fee-val" style="color:#fcd34d;">0.00 ₴</span>
             </div>
 
-            <p class="calc-status-note">У банкоматі достатньо купюр для цієї суми</p>
+            <div style="display:flex; justify-content:space-between; font-size:0.95rem; font-weight:bold; color:#f8fafc; margin-bottom:0.5rem; border-top:1px solid rgba(255,255,255,0.06); padding-top:0.35rem;">
+                <span>Разом до списання:</span>
+                <span class="font-mono" id="calc-total-debit-val" style="color:#4ade80;">0.00 ₴</span>
+            </div>
+
+            <div class="calc-remaining-row">
+                <span class="calc-remaining-label">Залишок після операції</span>
+                <span class="calc-remaining-val font-mono" id="calc-remaining-val">0.00 ₴</span>
+            </div>
+
+            <p class="calc-status-note" id="calc-status-note">У банкоматі достатньо купюр для цієї суми</p>
         </div>
     </div>
 </div>
@@ -109,6 +117,8 @@
         const amountInput = document.getElementById('withdraw-amount-input');
         const breakdownList = document.getElementById('calc-breakdown-list');
         const remainingVal = document.getElementById('calc-remaining-val');
+        const feeVal = document.getElementById('calc-fee-val');
+        const totalDebitVal = document.getElementById('calc-total-debit-val');
 
         function setPreset(val) {
             if (amountInput) {
@@ -124,7 +134,12 @@
 
         function recalculate() {
             const amount = parseFloat(amountInput.value) || 0;
-            const remaining = Math.max(0, initialBalance - amount);
+            const fee = Math.round(amount * 0.01 * 100) / 100;
+            const totalDebit = amount + fee;
+            const remaining = Math.max(0, initialBalance - totalDebit);
+
+            if (feeVal) feeVal.textContent = fee.toFixed(2) + ' ₴';
+            if (totalDebitVal) totalDebitVal.textContent = totalDebit.toFixed(2) + ' ₴';
             if (remainingVal) {
                 remainingVal.textContent = remaining.toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₴';
             }
@@ -141,10 +156,12 @@
             ];
 
             let html = '';
+            let totalNotes = 0;
             for (const d of denoms) {
                 if (rem >= d.val) {
                     const count = Math.floor(rem / d.val);
                     rem %= d.val;
+                    totalNotes += count;
                     html += `
                         <div class="calc-row">
                             <div class="calc-denom-col">
@@ -162,6 +179,17 @@
             }
 
             breakdownList.innerHTML = html;
+
+            const statusNote = document.getElementById('calc-status-note');
+            if (statusNote) {
+                if (totalNotes > 40) {
+                    statusNote.textContent = `Увага: потрібно ${totalNotes} купюр (ліміт: 40)`;
+                    statusNote.style.color = '#f87171';
+                } else {
+                    statusNote.textContent = 'У банкоматі достатньо купюр для цієї суми';
+                    statusNote.style.color = '';
+                }
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function () {

@@ -1,0 +1,161 @@
+@model AtmSimulator.ViewModels.ReceiptViewModel
+
+@{
+    ViewData["Title"] = "Квитанція / Receipt";
+}
+
+<div class="atm-screen">
+    <div class="receipt-wrapper" style="max-width: 440px; width: 100%;">
+
+        <!-- Паперовий чек банкомату -->
+        <div id="receipt-paper" class="receipt-paper" style="background: #ffffff; color: #111827; padding: 2rem 1.75rem; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-family: 'Courier New', Courier, monospace; position: relative;">
+            <div style="text-align: center; border-bottom: 2px dashed #9ca3af; padding-bottom: 1rem; margin-bottom: 1rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; font-weight: bold; letter-spacing: 1px;">🏦 ATM SIMULATOR BANK</h3>
+                <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #4b5563;">ТЕРМІНАЛ: @Model.TerminalId</p>
+                <p style="margin: 0; font-size: 0.8rem; color: #4b5563;">м. Київ, вул. Університетська, 1</p>
+            </div>
+
+            <div style="font-size: 0.85rem; line-height: 1.6;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>ДАТА / ЧАС:</span>
+                    <strong>@Model.DateTime.ToString("dd.MM.yyyy HH:mm:ss")</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>ЧЕК №:</span>
+                    <strong>#@Model.TransactionId.ToString("D6")</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>КАРТКА:</span>
+                    <strong>@Model.CardNumberMasked</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>КЛІЄНТ:</span>
+                    <span>@Model.OwnerName</span>
+                </div>
+
+                <div style="border-top: 1px dashed #d1d5db; margin: 0.75rem 0;"></div>
+
+                <div style="margin-bottom: 0.5rem;">
+                    <div style="color: #4b5563; font-size: 0.8rem;">ТИП ОПЕРАЦІЇ:</div>
+                    <div style="font-weight: bold; font-size: 0.95rem;">@Model.FormattedTransactionType</div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div style="margin-bottom: 0.5rem; font-size: 0.8rem; color: #374151; background: #f3f4f6; padding: 0.4rem; border-radius: 4px;">
+                        @Model.Description
+                    </div>
+                }
+
+                <div style="border-top: 1px dashed #d1d5db; margin: 0.75rem 0;"></div>
+
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span>СУМА ОПЕРАЦІЇ:</span>
+                    <strong>@Model.Amount.ToString("N2") ₴</strong>
+                </div>
+
+                @if (Model.Fee > 0)
+                {
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #b45309;">
+                        <span>КОМІСІЯ БАНКУ:</span>
+                        <span>@Model.Fee.ToString("N2") ₴</span>
+                    </div>
+                }
+
+                <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: bold; margin-top: 0.5rem; border-top: 1px solid #111827; padding-top: 0.4rem;">
+                    <span>РАЗОМ ДО СПИСАННЯ:</span>
+                    <span>@Model.TotalDebit.ToString("N2") ₴</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #4b5563; margin-top: 0.5rem;">
+                    <span>ЗАЛИШОК НА РАХУНКУ:</span>
+                    <strong>@Model.RemainingBalance.ToString("N2") ₴</strong>
+                </div>
+
+                <div style="border-top: 2px dashed #9ca3af; margin: 1.25rem 0 0.75rem 0;"></div>
+
+                <div style="text-align: center;">
+                    <span style="display: inline-block; background: #dcfce7; color: #166534; font-weight: bold; font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 4px;">
+                        @Model.Status
+                    </span>
+                    <p style="margin: 0.75rem 0 0.25rem 0; font-size: 0.75rem; color: #6b7280;">ДЯКУЄМО, ЩО СКОРИСТАЛИСЯ НАШИМ БАНКОМ!</p>
+
+                    <!-- Імітація штрих-коду -->
+                    <div style="margin-top: 0.75rem; letter-spacing: 4px; font-family: monospace; font-size: 1.1rem; color: #1f2937;">
+                        ||||| | |||| || ||||| | || ||||
+                    </div>
+                    <div style="font-size: 0.7rem; color: #9ca3af;">ATM-TX-@Model.TransactionId-@Model.DateTime.Ticks.ToString()[^6..]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопки дій (приховуються при друці) -->
+        <div class="receipt-actions no-print" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; gap: 0.75rem;">
+                <button type="button" onclick="window.print()" class="btn-atm" style="flex: 1; background: #0284c7;">
+                    🖨️ Друкувати
+                </button>
+                <button type="button" onclick="downloadReceiptPdf()" class="btn-atm" style="flex: 1; background: #10b981;">
+                    📥 Завантажити PDF
+                </button>
+            </div>
+            <a asp-controller="Account" asp-action="Index" class="btn-atm-outline" style="text-align: center;">
+                ← Головне меню
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    @@media print {
+        body {
+            background-color: #ffffff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .no-print, header, footer, nav, .btn, .btn-atm, .btn-atm-outline {
+            display: none !important;
+        }
+
+        .atm-screen {
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .receipt-wrapper {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        #receipt-paper {
+            box-shadow: none !important;
+            border: 1px solid #d1d5db !important;
+            padding: 1.5rem !important;
+            max-width: 380px !important;
+            margin: 0 auto !important;
+        }
+    }
+</style>
+
+@section Scripts {
+    <!-- html2pdf.js для автоматичного завантаження чеку у форматі PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadReceiptPdf() {
+            const element = document.getElementById('receipt-paper');
+            const opt = {
+                margin:       10,
+                filename:     'ATM_Receipt_#@Model.TransactionId' + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: [100, 180], orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+}

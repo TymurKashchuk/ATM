@@ -8,6 +8,11 @@
 
 <div class="atm-screen">
     <div class="admin-dashboard-layout">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert-success-atm mb-3">@TempData["Success"]</div>
+        }
+
         <!-- Верхній ряд: 3 KPI картки (4-admin.png) -->
         <div class="admin-kpi-row">
             <div class="atm-card admin-kpi-card">
@@ -28,7 +33,10 @@
         <div class="admin-middle-row">
             <!-- Картка касет -->
             <div class="atm-card admin-cassettes-card">
-                <h4 class="admin-panel-title">Касети (кількість купюр)</h4>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                    <h4 class="admin-panel-title" style="margin:0;">Касети (кількість купюр)</h4>
+                    <a href="/Admin/CashStorage" class="btn-atm-outline" style="font-size:0.75rem; padding:0.25rem 0.6rem; color:#60a5fa; border-color:#2563eb;">Інкасація ⚙️</a>
+                </div>
                 <div class="admin-cassettes-list">
                     <div class="cassette-item">
                         <span class="cassette-denom font-mono">500 ₴</span>
@@ -104,9 +112,14 @@
                     }
                 </form>
 
-                <a href="/Admin/Create" class="btn-atm admin-add-btn">
-                    + Новий акаунт
-                </a>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <a href="/Admin/CashStorage" class="btn-atm admin-add-btn" style="background:#0284c7;">
+                        Каса банкомату 🏦
+                    </a>
+                    <a href="/Admin/Create" class="btn-atm admin-add-btn">
+                        + Новий акаунт
+                    </a>
+                </div>
             </div>
 
             <div class="admin-table-responsive">
