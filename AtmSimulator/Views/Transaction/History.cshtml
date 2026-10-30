@@ -1,20 +1,20 @@
-﻿@model AtmSimulator.ViewModels.TransactionHistoryViewModel
+@model AtmSimulator.ViewModels.TransactionHistoryViewModel
 
 @{
     ViewData["Title"] = "Transaction History";
 }
 
 <div class="atm-screen">
-    <div class="atm-card" style="max-width: 560px;">
+    <div class="atm-card" style="max-width: 600px;">
         <div class="atm-header">
-            <h1>Transaction History</h1>
-            <p class="text-muted">Total: @Model.TotalCount transactions</p>
+            <h1>Історія транзакцій</h1>
+            <p class="text-muted">Всього операцій: @Model.TotalCount</p>
         </div>
 
         @if (!Model.Transactions.Any())
         {
             <div class="empty-state">
-                <p>No transactions yet</p>
+                <p>Транзакцій ще немає</p>
             </div>
         }
         else
@@ -22,27 +22,35 @@
             <div class="transaction-list">
                 @foreach (var t in Model.Transactions)
                 {
-                    <div class="transaction-item">
-                        <div class="transaction-icon @t.Type.ToString().ToLower()">
-                            @switch (t.Type)
-                            {
-                                case AtmSimulator.Models.TransactionType.Withdrawal:
-                                    <span>↑</span>
-                                    break;
-                                case AtmSimulator.Models.TransactionType.Deposit:
-                                    <span>↓</span>
-                                    break;
-                                case AtmSimulator.Models.TransactionType.Transfer:
-                                    <span>⇄</span>
-                                    break;
-                            }
+                    <div class="transaction-item" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                        <div style="display:flex; align-items:center; gap:0.75rem;">
+                            <div class="transaction-icon @t.Type.ToString().ToLower()">
+                                @switch (t.Type)
+                                {
+                                    case AtmSimulator.Models.TransactionType.Withdrawal:
+                                        <span>↑</span>
+                                        break;
+                                    case AtmSimulator.Models.TransactionType.Deposit:
+                                        <span>↓</span>
+                                        break;
+                                    case AtmSimulator.Models.TransactionType.Transfer:
+                                        <span>⇄</span>
+                                        break;
+                                }
+                            </div>
+                            <div class="transaction-info">
+                                <p class="transaction-type">@t.Type</p>
+                                <p class="transaction-date">@t.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+                            </div>
                         </div>
-                        <div class="transaction-info">
-                            <p class="transaction-type">@t.Type</p>
-                            <p class="transaction-date">@t.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
-                        </div>
-                        <div class="transaction-amount @((t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"))) ? "positive" : "negative")">
-                            @((t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"))) ? "+" : "-")@t.Amount.ToString("N2") ₴
+
+                        <div style="display:flex; align-items:center; gap:0.75rem;">
+                            <div class="transaction-amount @((t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"))) ? "positive" : "negative")">
+                                @((t.Type == AtmSimulator.Models.TransactionType.Deposit || (t.Description != null && t.Description.StartsWith("Переказ з"))) ? "+" : "-")@t.Amount.ToString("N2") ₴
+                            </div>
+                            <a asp-action="Receipt" asp-route-id="@t.Id" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem; padding:0.25rem 0.6rem; color:#94a3b8; border-color:#334e68; text-decoration:none; border-radius:4px;">
+                                Чек 📄
+                            </a>
                         </div>
                     </div>
                 }
@@ -64,6 +72,6 @@
             }
         }
 
-        <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-3">← Back</a>
+        <a asp-controller="Account" asp-action="Index" class="btn-atm-outline mt-3">← Назад</a>
     </div>
 </div>

@@ -13,15 +13,21 @@ namespace AtmSimulator.Controllers
         private readonly DepositService _depositService;
         private readonly TransferService _transferService;
         private readonly TransactionService _transactionService;
+        private readonly ReceiptService _receiptService;
 
-        public TransactionController(AppDbContext context, WithdrawalService withdrawalService, DepositService depositService,
-            TransferService transferService, TransactionService transactionService)
+        public TransactionController(AppDbContext context,
+            WithdrawalService withdrawalService,
+            DepositService depositService,
+            TransferService transferService,
+            TransactionService transactionService,
+            ReceiptService receiptService)
         {
             _context = context;
             _withdrawalService = withdrawalService;
             _depositService = depositService;
             _transferService = transferService;
             _transactionService = transactionService;
+            _receiptService = receiptService;
         }
 
         public async Task<IActionResult> Withdraw()
@@ -54,8 +60,14 @@ namespace AtmSimulator.Controllers
                 var dispensed = await _withdrawalService.WithdrawAsync(accountId, model.Amount);
                 await _context.Entry(account).ReloadAsync();
 
+                var lastTx = await _context.Transactions
+                    .Where(t => t.AccountId == accountId)
+                    .OrderByDescending(t => t.Id)
+                    .FirstOrDefaultAsync();
+
                 model.DispensedCash = dispensed;
                 model.CurrentBalance = account.Balance;
+                model.TransactionId = lastTx?.Id;
 
                 return View("WithdrawSuccess", model);
             }
@@ -110,7 +122,16 @@ namespace AtmSimulator.Controllers
                 var depositedAmount = await _depositService.DepositAsync(accountId, banknotesDict);
                 await _context.Entry(account).ReloadAsync();
 
+                var lastTx = await _context.Transactions
+                    .Where(t => t.AccountId == accountId)
+                    .OrderByDescending(t => t.Id)
+                    .FirstOrDefaultAsync();
+
                 TempData["Success"] = $"Успішно внесено {depositedAmount:N2} ₴";
+                if (lastTx != null)
+                {
+                    return RedirectToAction(nameof(Receipt), new { id = lastTx.Id });
+                }
                 return RedirectToAction("Index", "Account");
             }
             catch (InvalidOperationException ex)
@@ -151,12 +172,44 @@ namespace AtmSimulator.Controllers
                 await _transferService.TransferAsync(accountId, model.RecipientCardNumber, model.Amount);
                 await _context.Entry(account).ReloadAsync();
 
+                var lastTx = await _context.Transactions
+                    .Where(t => t.AccountId == accountId)
+                    .OrderByDescending(t => t.Id)
+                    .FirstOrDefaultAsync();
+
                 TempData["Success"] = $"Успішно переведено {model.Amount:N2} ₴";
+                if (lastTx != null)
+                {
+                    return RedirectToAction(nameof(Receipt), new { id = lastTx.Id });
+                }
                 return RedirectToAction("Index", "Account");
             }
             catch (InvalidOperationException ex)
             {
                 return this.InvalidOpAsModelError(ex, model);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Receipt(int id)
+        {
+            var accountId = HttpContext.Session.GetInt32("AccountId");
+            if (accountId == null) return RedirectToAction("InsertCard", "Auth");
+
+            try
+            {
+                var receipt = await _receiptService.GenerateReceiptAsync(id);
+                var tx = await _context.Transactions.FindAsync(id);
+                if (tx == null || tx.AccountId != accountId.Value)
+                {
+                    return RedirectToAction("Index", "Account");
+                }
+
+                return View(receipt);
+            }
+            catch (InvalidOperationException)
+            {
+                return RedirectToAction("Index", "Account");
             }
         }
 

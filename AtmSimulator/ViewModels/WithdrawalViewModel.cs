@@ -14,5 +14,6 @@ namespace AtmSimulator.ViewModels
         public decimal DailyLimit { get; set; } = WithdrawalService.DailyWithdrawalLimit;
         public decimal FeePercent { get; set; } = WithdrawalService.WithdrawalFeePercent;
         public Dictionary<int, int>? DispensedCash { get; set; }
+        public int? TransactionId { get; set; }
     }
 }
