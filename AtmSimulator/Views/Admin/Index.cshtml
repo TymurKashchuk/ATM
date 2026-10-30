@@ -1,4 +1,4 @@
-﻿@model AtmSimulator.ViewModels.AdminAccountListViewModel
+@model AtmSimulator.ViewModels.AdminAccountListViewModel
 
 @{
     ViewData["Title"] = "Admin Panel";
@@ -26,7 +26,10 @@
             }
         </form>
 
-        <a href="/Admin/Create" class="btn-atm mb-3">+ Новий акаунт</a>
+        <div style="display:flex; gap:0.75rem; margin-bottom:1.25rem;">
+            <a href="/Admin/Create" class="btn-atm" style="flex:1;">+ Новий акаунт</a>
+            <a href="/Admin/CashStorage" class="btn-atm" style="flex:1; background:#0284c7;">Каса банкомату 🏦</a>
+        </div>
 
         @foreach (var account in Model.Accounts)
         {

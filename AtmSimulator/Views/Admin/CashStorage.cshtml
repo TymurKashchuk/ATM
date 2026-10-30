@@ -1,0 +1,94 @@
+@model AtmSimulator.ViewModels.CashStorageViewModel
+
+@{
+    ViewData["Title"] = "Каса банкомату";
+}
+
+<div class="atm-screen">
+    <div class="atm-card" style="max-width: 800px;">
+        <div class="atm-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <h1>Каса банкомату</h1>
+                <p class="text-muted" style="margin:0;">Моніторинг касет та інкасація</p>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+                <a href="/Admin/Index" class="btn-atm-outline" style="width:auto; padding:0.5rem 1rem;">← Рахунки</a>
+                <a href="/Admin/AdminLogout" class="btn-atm-outline" style="width:auto; padding:0.5rem 1rem; border-color:#e94560; color:#e94560;">Вийти</a>
+            </div>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert-success-atm mb-3">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mb-3" style="background:#4a1525; border-color:#e94560; color:#fca5a5;">@TempData["Error"]</div>
+        }
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+            <div style="background:#0f3460; border:1px solid #1a4a7a; border-radius:12px; padding:1.25rem; text-align:center;">
+                <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:0.25rem;">Загальна готівка в банкоматі</p>
+                <h2 style="color:#4ade80; font-size:1.8rem; font-weight:700; margin:0;">@Model.TotalCashAmount.ToString("N2") ₴</h2>
+            </div>
+            <div style="background:#0f3460; border:1px solid #1a4a7a; border-radius:12px; padding:1.25rem; text-align:center;">
+                <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:0.25rem;">Всього банкнот у касетах</p>
+                <h2 style="color:#60a5fa; font-size:1.8rem; font-weight:700; margin:0;">@Model.TotalBanknotesCount <span style="font-size:1rem; color:#94a3b8;">шт.</span></h2>
+            </div>
+        </div>
+
+        <h3 style="color:#e0e0e0; font-size:1.2rem; margin-bottom:1rem;">Стан касет за номіналами</h3>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            @foreach (var cassette in Model.Cassettes)
+            {
+                <div style="background:#111a30; border:1px solid #1a4a7a; border-radius:10px; padding:1rem; display:flex; flex-direction:column; gap:0.75rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                        <div style="display:flex; align-items:center; gap:0.75rem;">
+                            <span style="background:#1a4a7a; color:#fff; font-weight:700; font-size:1.1rem; padding:0.35rem 0.75rem; border-radius:6px; min-width:85px; text-align:center;">
+                                @cassette.Denomination ₴
+                            </span>
+                            <div>
+                                <span style="color:#e0e0e0; font-weight:600; font-size:1rem;">@cassette.Count шт.</span>
+                                <span style="color:#94a3b8; font-size:0.85rem;">(@cassette.TotalValue.ToString("N2") ₴)</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            @if (cassette.IsLow)
+                            {
+                                <span style="background:#e94560; color:#fff; font-size:0.75rem; padding:0.25rem 0.6rem; border-radius:12px; font-weight:600;">
+                                    Низький залишок (&lt;10)
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="background:#166534; color:#86efac; font-size:0.75rem; padding:0.25rem 0.6rem; border-radius:12px; font-weight:600;">
+                                    У нормі
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap; padding-top:0.5rem; border-top:1px solid #1a3558;">
+                        <form method="post" asp-action="RefillCash" style="display:flex; gap:0.5rem; align-items:center; flex:1; min-width:240px;">
+                            <input type="hidden" name="denomination" value="@cassette.Denomination" />
+                            <input type="number" name="count" min="1" max="1000" value="50" class="form-control" style="padding:0.4rem 0.6rem; font-size:0.9rem;" placeholder="К-сть" required />
+                            <button type="submit" class="btn-atm" style="width:auto; padding:0.4rem 0.9rem; font-size:0.85rem; background:#10b981; white-space:nowrap;">
+                                + Поповнити
+                            </button>
+                        </form>
+
+                        <form method="post" asp-action="WithdrawCash" style="display:flex; gap:0.5rem; align-items:center; flex:1; min-width:240px;">
+                            <input type="hidden" name="denomination" value="@cassette.Denomination" />
+                            <input type="number" name="count" min="1" max="@(Math.Max(1, cassette.Count))" value="@(Math.Min(10, cassette.Count))" class="form-control" style="padding:0.4rem 0.6rem; font-size:0.9rem;" placeholder="К-сть" required @(cassette.Count == 0 ? "disabled" : "") />
+                            <button type="submit" class="btn-atm" style="width:auto; padding:0.4rem 0.9rem; font-size:0.85rem; background:#f43f5e; white-space:nowrap;" @(cassette.Count == 0 ? "disabled" : "")>
+                                - Інкасувати
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
